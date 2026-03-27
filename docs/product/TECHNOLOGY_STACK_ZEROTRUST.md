@@ -21,7 +21,7 @@
 | Campo | Detalle |
 |---|---|
 | **Responsabilidad** | Gestiona el flujo de autenticación y autorización central de la plataforma — emisión de tokens, MFA, rate limiting y exposición de la API REST. |
-| **Justificación técnica** | Fuertemente tipado y compilado lo que permite identificar los errores al momento de compilar |
+| **Justificación técnica** | Fuertemente tipado y compilado lo que permite identificar los errores al momento de compilar ademas con Spring Security, estándar de la industria para sistemas IAM, con soporte nativo para OAuth2, JWT y gestión de sesiones, battle-tested en sistemas financieros y enterprise. |
 | **Alternativas consideradas** | Node.js con Express descartado por su naturaleza dinámicamente tipada, lo que representa un riesgo en el manejo de tokens y permisos en un sistema IAM enterprise. |
 
 ---
