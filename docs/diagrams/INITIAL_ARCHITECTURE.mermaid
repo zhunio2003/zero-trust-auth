@@ -1,0 +1,57 @@
+graph TB
+    %% Clientes externos
+    Dashboard["Admin Dashboard\n(React)"]
+    ExtApp["Apps externas"]
+
+    %% Infraestructura de entrada
+    Gateway["API Gateway\nEntrada única · Rate limiting"]
+
+    %% Servicios de negocio
+    AuthN["Authentication Service\nJava + Spring Boot\nLogin · Tokens "]
+    AuthZ["Authorization Service\nJava + Spring Boot\nValida tokens · ABAC"]
+    ML["ML / Anomaly Detection\nPython + FastAPI\nScore de confianza"]
+    AuditLog["Audit Log Service\nJava + Spring Boot\nLogs · Hash chaining"]
+
+    %% Mensajería asíncrona
+    Kafka["Apache Kafka\nMensajería asíncrona"]
+
+    %% Infraestructura de persistencia
+    Redis[("Redis\nSesiones · TTL")]
+    Postgres[("PostgreSQL\nUsuarios · Políticas ABAC")]
+    Mongo[("MongoDB\nAudit logs")]
+
+    %% Observabilidad
+    Obs["Prometheus + Grafana\n+ OpenTelemetry"]
+
+    %% --- Conexiones ---
+
+    %% Clientes → Gateway (HTTPS)
+    Dashboard -->|HTTPS| Gateway
+    ExtApp -->|HTTPS| Gateway
+
+    %% Gateway → Servicios (REST síncrono)
+    Gateway -->|REST síncrono| AuthN
+
+    %% Auth → Authorization (score de confianza, síncrono)
+    AuthN -->|score de confianza| AuthZ
+
+    %% Servicios → Kafka (eventos asíncronos)
+    AuthN -->|evento autenticación| Kafka
+    AuthZ -->|evento autorización| Kafka
+    ML -->|score de anomalía| Kafka
+
+    %% Kafka → consumidores
+    Kafka -->|consume evento| AuditLog
+    Kafka -->|consume evento| ML
+
+    %% Servicios → Persistencia
+    AuthN --- Redis
+    AuthN --- Postgres
+    AuthZ --- Postgres
+    AuditLog --- Mongo
+
+    %% Observabilidad transversal
+    AuthN -.->|métricas| Obs
+    AuthZ -.->|métricas| Obs
+    ML -.->|métricas| Obs
+    AuditLog -.->|métricas| Obs
