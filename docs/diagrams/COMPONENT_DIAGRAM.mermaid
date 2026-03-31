@@ -1,0 +1,106 @@
+graph TB
+    %% ── Clientes externos ──
+    Client["Cliente / Admin Dashboard"]
+
+    %% ── Infraestructura de entrada ──
+    Gateway["API Gateway"]
+
+    Client -->|HTTPS| Gateway
+
+    %% ══════════════════════════════════════════
+    %% AUTHENTICATION SERVICE
+    %% ══════════════════════════════════════════
+    subgraph AuthN["Authentication Service — Java + Spring Boot"]
+        AuthN_RL["Rate Limiting"]
+        AuthN_CA["Credential Authentication"]
+        AuthN_MFA["MFA (TOTP / WebAuthn)"]
+        AuthN_TM["Token Management"]
+        AuthN_EP["Event Publisher"]
+
+        AuthN_RL -->|"pasa → request"| AuthN_CA
+        AuthN_CA -->|"usuario verificado"| AuthN_MFA
+        AuthN_MFA -->|"segundo factor OK"| AuthN_TM
+        AuthN_TM -.->|"evento"| AuthN_EP
+        AuthN_RL -.->|"evento"| AuthN_EP
+        AuthN_CA -.->|"evento"| AuthN_EP
+        AuthN_MFA -.->|"evento"| AuthN_EP
+    end
+
+    %% ══════════════════════════════════════════
+    %% AUTHORIZATION SERVICE
+    %% ══════════════════════════════════════════
+    subgraph AuthZ["Authorization Service — Java + Spring Boot"]
+        AuthZ_AE["Access Evaluator"]
+        AuthZ_EP["Event Publisher"]
+
+        AuthZ_AE -.->|"evento"| AuthZ_EP
+    end
+
+    %% ══════════════════════════════════════════
+    %% ML / POLICY ENGINE
+    %% ══════════════════════════════════════════
+    subgraph MLService["ML / Anomaly Detection + Policy Engine — Python + FastAPI"]
+        ML_AD["Anomaly Detection"]
+        ML_PE["Policy Engine"]
+        ML_EP["Event Publisher"]
+
+        ML_AD -->|"score de confianza"| ML_PE
+        ML_PE -.->|"evento"| ML_EP
+        ML_AD -.->|"evento"| ML_EP
+    end
+
+    %% ══════════════════════════════════════════
+    %% AUDIT LOG SERVICE
+    %% ══════════════════════════════════════════
+    subgraph AuditLog["Audit Log Service — Java + Spring Boot"]
+        AL_EI["Event Ingestion"]
+        AL_LQ["Log Query & Integrity"]
+        AL_EP["Event Publisher"]
+
+        AL_EI -.->|"evento"| AL_EP
+    end
+
+    %% ══════════════════════════════════════════
+    %% INFRAESTRUCTURA DE SOPORTE
+    %% ══════════════════════════════════════════
+    Kafka["Apache Kafka"]
+    Redis[("Redis")]
+    PG_AuthN[("PostgreSQL — AuthN")]
+    PG_AuthZ[("PostgreSQL — AuthZ")]
+    Mongo_ML[("MongoDB — ML")]
+    Mongo_Audit[("MongoDB — Audit")]
+    Obs["Prometheus + Grafana + OpenTelemetry"]
+
+    %% ── Flujo sincrónico principal ──
+    Gateway -->|"REST síncrono"| AuthN_RL
+    AuthN_TM -->|"respuesta con JWT"| Gateway
+    Gateway -->|"REST síncrono"| AuthZ_AE
+    AuthZ_AE -->|"REST síncrono"| ML_PE
+
+    %% ── Dependencias externas: Authentication Service ──
+    AuthN_RL --- Redis
+    AuthN_CA --- PG_AuthN
+    AuthN_MFA --- PG_AuthN
+    AuthN_TM --- Redis
+    AuthN_EP -->|"publica"| Kafka
+
+    %% ── Dependencias externas: Authorization Service ──
+    AuthZ_AE --- PG_AuthZ
+    AuthZ_EP -->|"publica"| Kafka
+
+    %% ── Dependencias externas: ML / Policy Engine ──
+    ML_AD --- Mongo_ML
+    ML_AD ---|"consume"| Kafka
+    ML_EP -->|"publica"| Kafka
+
+    %% ── Dependencias externas: Audit Log Service ──
+    AL_EI ---|"consume"| Kafka
+    AL_EI --- Mongo_Audit
+    AL_LQ --- Mongo_Audit
+    AL_EP -->|"publica"| Kafka
+
+    %% ── Observabilidad ──
+    AuthN -.->|"métricas"| Obs
+    AuthZ -.->|"métricas"| Obs
+    MLService -.->|"métricas"| Obs
+    AuditLog -.->|"métricas"| Obs

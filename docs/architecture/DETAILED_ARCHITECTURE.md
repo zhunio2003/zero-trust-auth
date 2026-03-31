@@ -245,8 +245,7 @@ Este servicio contiene dos responsabilidades en el mismo proceso Python/FastAPI 
 |---|---|---|---|---|
 | Cliente | API Gateway | Sincrónico | HTTP/REST | Entrada al sistema |
 | API Gateway | Authentication Service | Sincrónico | HTTP/REST | Ruteo de requests |
-| API Gateway | Authorization Service | Sincrónico | HTTP/REST | Ruteo de requests |
-| Authorization Service | ML/Policy Engine (FastAPI) | Sincrónico | HTTP/REST | Evaluación ABAC + score ML en tiempo real |
+| Authentication Service | Authorization Service | Sincrónico | HTTP/REST | Validación de identidad antes de evaluar permisos || Authorization Service | ML/Policy Engine (FastAPI) | Sincrónico | HTTP/REST | Evaluación ABAC + score ML en tiempo real |
 | Authentication Service | Kafka | Asíncrono | Kafka Producer | Publicación de eventos de autenticación |
 | Authorization Service | Kafka | Asíncrono | Kafka Producer | Publicación de decisiones de acceso |
 | ML/Policy Engine | Kafka | Asíncrono | Kafka Producer/Consumer | Consumo de eventos para entrenamiento + publicación de evaluaciones |
