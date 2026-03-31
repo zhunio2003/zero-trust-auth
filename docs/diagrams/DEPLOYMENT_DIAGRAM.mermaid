@@ -1,0 +1,66 @@
+graph TB
+
+    %% ── Cliente externo ──
+    Client["Cliente / Admin Dashboard"]
+
+    %% ══════════════════════════════════════════
+    %% RED: PUBLIC
+    %% ══════════════════════════════════════════
+    subgraph Public["red: public"]
+        Frontend["frontend\nnginx · :80→80\nvol: —"]
+        Gateway["api-gateway\nSpring Boot · :8080→8080\nvol: —"]
+    end
+
+    Client -->|HTTPS :80| Frontend
+    Client -->|HTTPS :8080| Gateway
+
+    %% ══════════════════════════════════════════
+    %% RED: SERVICES
+    %% ══════════════════════════════════════════
+    subgraph Services["red: services"]
+        AuthN["auth-service\nSpring Boot · :8081 interno\nvol: —"]
+        AuthZ["authz-service\nSpring Boot · :8082 interno\nvol: —"]
+        ML["ml-policy-engine\nFastAPI · :8000 interno\nvol: —"]
+        Audit["audit-log-service\nSpring Boot · :8083 interno\nvol: —"]
+        Kafka["kafka\n:9092 interno\nvol: kafka_data"]
+    end
+
+    Gateway -->|"REST :8081"| AuthN
+    Gateway -->|"REST :8082"| AuthZ
+    AuthZ -->|"REST :8000"| ML
+
+    AuthN -.->|"publica eventos"| Kafka
+    AuthZ -.->|"publica eventos"| Kafka
+    ML -.->|"publica / consume"| Kafka
+    Audit -.->|"consume eventos"| Kafka
+
+    %% ══════════════════════════════════════════
+    %% RED: DATA
+    %% ══════════════════════════════════════════
+    subgraph Data["red: data"]
+        PG_AuthN[("postgres-authn\n:5432 interno\nvol: postgres_authn_data")]
+        PG_AuthZ[("postgres-authz\n:5432 interno\nvol: postgres_authz_data")]
+        Mongo_Audit[("mongodb-auditlog\n:27017 interno\nvol: mongodb_auditlog_data")]
+        Mongo_ML[("mongodb-ml\n:27017 interno\nvol: mongodb_ml_data")]
+        Redis[("redis\n:6379 interno\nvol: redis_data")]
+    end
+
+    AuthN --- PG_AuthN
+    AuthN --- Redis
+    AuthZ --- PG_AuthZ
+    ML --- Mongo_ML
+    Audit --- Mongo_Audit
+
+    %% ══════════════════════════════════════════
+    %% RED: MONITORING
+    %% ══════════════════════════════════════════
+    subgraph Monitoring["red: monitoring"]
+        Prometheus["prometheus\n:9090 interno\nvol: prometheus_data"]
+        Grafana["grafana\n:3000 interno\nvol: grafana_data"]
+    end
+
+    AuthN -.->|"métricas"| Prometheus
+    AuthZ -.->|"métricas"| Prometheus
+    ML -.->|"métricas"| Prometheus
+    Audit -.->|"métricas"| Prometheus
+    Prometheus -->|"datasource"| Grafana
