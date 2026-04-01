@@ -37,7 +37,7 @@ graph TB
     end
 
     Gateway -->|"REST :8081"| AuthN
-    Gateway -->|"REST :8082"| AuthZ
+    AuthN -->|"REST :8082"| AuthZ
     AuthZ -->|"REST :8000"| ML
 
     AuthN -.->|"publica eventos"| Kafka
