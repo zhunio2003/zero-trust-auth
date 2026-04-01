@@ -133,18 +133,29 @@ Todas las historias de esta épica son **Technical Stories** — no tienen usuar
 
 #### TS-01.1 — Estructura del repositorio
 
-**Story:** "Como equipo de desarrollo, necesitamos la estructura del repositorio definida y creada, para que cada microservicio tenga su carpeta dedicada y las historias posteriores tengan dónde implementar su código."
+**Story:** "Como equipo de desarrollo, necesitamos la estructura del repositorio definida y creada con organización profesional de monorepo, para que cada microservicio, la infraestructura, la documentación y los pipelines tengan su ubicación establecida antes de implementar código."
 
 **Criterios de aceptación:**
 
-1. El repositorio contiene las carpetas de los 4 microservicios: `auth-service/`, `authz-service/`, `ml-policy-engine/`, `audit-log-service/`.
-2. Existe la carpeta `api-gateway/` para el punto de entrada del sistema.
-3. Existe la carpeta `frontend/` para el Admin Dashboard.
-4. Existe la carpeta `docs/` con toda la documentación de Sprint 0 (Product Vision Board, Threat Model, Technology Stack, Arquitectura Detallada, Diagrama de Componentes, Diagrama de Despliegue, Definition of Done).
-5. Existe la carpeta `docker/` para configuraciones de contenedores.
-6. Los archivos de configuración de la raíz están creados: `.gitignore`, `README.md`, `docker-compose.yml` (placeholder).
-7. La estructura está subida al repositorio de GitHub con Conventional Commits.
-8. El `README.md` documenta la estructura de carpetas del proyecto con una descripción de cada directorio.
+1. El directorio `services/` contiene la estructura interna completa de los 5 servicios: `auth-service/`, `authz-service/`, `audit-log-service/` (Java + Spring Boot con packages: config, controller, service, repository, model/entity, model/dto, security o event según corresponda, exception), `ml-policy-engine/` (Python + FastAPI con módulos: api/routes, core, models, services, repositories, events) y `api-gateway/` (Java + Spring Boot con packages: config, filter, exception).
+
+2. Cada servicio Java incluye su `Dockerfile`, `build.gradle`, `README.md` y la estructura de tests paralela a `main/`. El servicio Python incluye `Dockerfile`, `requirements.txt`, `.flake8`, `README.md` y carpeta `tests/`.
+
+3. El directorio `frontend/` contiene la estructura base de React: `src/` (components, pages, services, hooks, utils), `public/`, `package.json`, `Dockerfile` y `README.md`.
+
+4. El directorio `infra/` contiene las subcarpetas de configuración: `kafka/`, `prometheus/`, `grafana/provisioning/` (datasources, dashboards) y `db/` con scripts de inicialización para cada base de datos (`postgres-authn/`, `postgres-authz/`, `mongodb-audit/`, `mongodb-ml/`).
+
+5. El directorio `docs/` está organizado en subcarpetas por dominio: `architecture/` (Arquitectura Detallada, Diagrama de Componentes, Diagrama de Despliegue), `security/` (Threat Model STRIDE), `project/` (Product Vision Board, Product Backlog, Definition of Done), `stack/` (Technology Stack), `adr/` con su `README.md` índice, e `images/`.
+
+6. El directorio `.github/` contiene `workflows/ci.yml` (placeholder), `ISSUE_TEMPLATE/` (bug_report.md, feature_request.md) y `pull_request_template.md`.
+
+7. El directorio `scripts/` contiene los scripts de utilidad: `generate-keys.sh`, `seed-data.sh`, `verify-audit-chain.sh` (placeholders con comentario descriptivo).
+
+8. La raíz del repositorio contiene: `.gitignore`, `.env.example`, `.editorconfig`, `docker-compose.yml` (placeholder), `README.md`, `LICENSE`, `settings.gradle`, `build.gradle` (raíz), y el Gradle Wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/`).
+
+9. El `README.md` raíz documenta la estructura de carpetas del proyecto con una descripción de cada directorio principal y las instrucciones básicas para clonar y levantar el sistema.
+
+10. La estructura está subida al repositorio de GitHub con Conventional Commits.
 
 ---
 
