@@ -12,7 +12,6 @@
 graph TB
     %% ── Clientes externos ──
     Client["Cliente / Admin Dashboard"]
-    
     %% ── Infraestructura de entrada ──
     Gateway["API Gateway"]
 
