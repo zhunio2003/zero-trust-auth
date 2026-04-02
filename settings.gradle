@@ -1,0 +1,12 @@
+// ============================================================
+// settings.gradle — ZeroTrust Auth Platform (Monorepo)
+// Define los subproyectos Java que Gradle gestiona.
+// ============================================================
+
+rootProject.name = 'zerotrust-auth-platform'
+
+// Servicios Java + Spring Boot
+include ':services:auth-service'
+include ':services:authz-service'
+include ':services:audit-log-service'
+include ':services:api-gateway'

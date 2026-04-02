@@ -1,0 +1,70 @@
+# ============================================================
+# .gitignore — ZeroTrust Auth Platform
+# Multi-lenguaje: Java, Python, Node.js, Docker, IDEs
+# ============================================================
+
+# ── Java / Gradle ──
+*.class
+*.jar
+*.war
+*.ear
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+out/
+
+# ── Python ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+.venv/
+venv/
+env/
+.eggs/
+
+# ── Node.js / React ──
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.next/
+
+# ── Docker ──
+docker-compose.override.yml
+
+# ── Environment / Secrets ──
+.env
+*.pem
+*.key
+*.p12
+*.jks
+
+# ── IDEs ──
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ── OS ──
+.DS_Store
+Thumbs.db
+
+# ── Logs ──
+*.log
+logs/
+
+# ── Coverage ──
+coverage/
+htmlcov/
+.coverage
+jacoco/
+
+# ── Misc ──
+*.tmp
+*.bak

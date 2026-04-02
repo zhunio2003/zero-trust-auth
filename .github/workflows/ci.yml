@@ -1,0 +1,21 @@
+# ============================================================
+# CI Pipeline — ZeroTrust Auth Platform
+# Se activa en cada push al repositorio.
+# Implementación completa en TS-01.2 (Pipeline CI/CD).
+# ============================================================
+
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder
+        run: echo "CI pipeline — implementación pendiente en TS-01.2"

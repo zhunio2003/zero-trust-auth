@@ -1,0 +1,19 @@
+# ============================================================
+# docker-compose.yml — ZeroTrust Auth Platform
+# Implementación completa en TS-01.3 (Docker Compose con redes segmentadas).
+# ============================================================
+
+version: "3.9"
+
+services: {}
+  # Configuración pendiente — ver TS-01.3
+
+networks:
+  public:
+    driver: bridge
+  services:
+    driver: bridge
+  data:
+    driver: bridge
+  monitoring:
+    driver: bridge

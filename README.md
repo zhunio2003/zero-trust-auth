@@ -32,7 +32,7 @@
  
 ## Architecture Overview
 
-> **Deep dive:** [Arquitectura Detallada](docs/DETAILED_ARCHITECTURE.md) · [Diagrama de Componentes](docs/COMPONENT_DIAGRAM.md)
+> **Deep dive:** [Arquitectura Detallada](docs/architecture/DETAILED_ARCHITECTURE.md) · [Diagrama de Componentes](docs/diagrams/COMPONENT_DIAGRAM.mermaid)
 
 ---
  
@@ -42,18 +42,64 @@
 
 ## Security Model
 
-> **Deep dive:** [Threat Model — STRIDE](docs/THREAT-MODEL_STRIDE.md)
+> **Deep dive:** [Threat Model — STRIDE](docs/security/THREAT-MODEL_STRIDE_ZEROTRUST.md)
  
 ---
 
 ## Tech Stack
 
-> **Deep dive:** [Technology Stack](docs/TECHNOLOGY_STACK_ZEROTRUST.md)
+> **Deep dive:** [Technology Stack](docs/stack/TECHNOLOGY_STACK_ZEROTRUST.md)
  
 ---
  
 ## Project Structure
 
+```
+zero-trust-auth/
+│
+├── services/                        # Backend microservices
+│   ├── auth-service/                # Authentication Service — Java + Spring Boot
+│   ├── authz-service/               # Authorization Service — Java + Spring Boot
+│   ├── audit-log-service/           # Audit Log Service — Java + Spring Boot
+│   ├── ml-policy-engine/            # ML + Policy Engine — Python + FastAPI
+│   └── api-gateway/                 # API Gateway — Java + Spring Boot
+│
+├── frontend/                        # Admin Dashboard — React
+│
+├── infra/                           # Infrastructure configuration
+│   ├── kafka/                       # Kafka broker configuration
+│   ├── prometheus/                  # Prometheus scrape targets
+│   ├── grafana/provisioning/        # Grafana datasources and dashboards
+│   └── db/                          # Database init scripts
+│       ├── postgres-authn/          # AuthN schema (users, credentials, MFA)
+│       ├── postgres-authz/          # AuthZ schema (ABAC policies)
+│       ├── mongodb-audit/           # Audit Log collections and indexes
+│       └── mongodb-ml/             # ML behavior data collections
+│
+├── scripts/                         # Utility scripts
+│   ├── generate-keys.sh             # RSA key pair generation for JWT signing
+│   ├── seed-data.sh                 # Test data seeding
+│   └── verify-audit-chain.sh        # Audit log hash chain integrity check
+│
+├── docs/                            # Project documentation
+│   ├── adr/                         # Architecture Decision Records
+│   ├── architecture/                # Detailed Architecture, Component & Deployment Diagrams
+│   ├── brand/                       # Logo and visual assets
+│   ├── diagrams/                    # Mermaid source files
+│   ├── images/                      # Exported diagrams and screenshots
+│   ├── product/                     # Vision Board, DoD, Backlog, Sprint Planning
+│   ├── security/                    # Threat Model STRIDE
+│   └── stack/                       # Technology Stack decisions
+│
+├── .github/                         # GitHub Actions CI/CD and templates
+├── docker-compose.yml               # Container orchestration (4 segmented networks)
+├── build.gradle                     # Shared Gradle config for Java services
+├── settings.gradle                  # Gradle monorepo subproject definitions
+└── README.md
+```
+ 
+Each microservice owns its own database (database-per-service principle). No service accesses another service's storage directly. Communication between services follows the synchronous flow `Gateway → AuthN → AuthZ → Policy Engine`, with asynchronous event publishing to Kafka for audit logging and ML training.
+ 
 ---
  
 ## Getting Started
@@ -66,13 +112,13 @@
  
 ## Testing
 
-> **Deep dive:** [Definition of Done](docs/DEFINITION_OF_DONE_ZEROTRUST.md)
+> **Deep dive:** [Definition of Done](docs/product/DEFINITION_OF_DONE_ZEROTRUST.md)
  
 ---
  
 ## Deployment
 
-> **Deep dive:** [Diagrama de Despliegue](docs/DEPLOYMENT_DIAGRAM.md)
+> **Deep dive:** [Diagrama de Despliegue](docs/diagrams/DEPLOYMENT_DIAGRAM.mermaid)
  
 ---
  
@@ -87,3 +133,5 @@
 ---
  
 ## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
