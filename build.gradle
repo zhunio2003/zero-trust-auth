@@ -36,4 +36,13 @@ subprojects {
     tasks.named('test') {
         useJUnitPlatform()
     }
+
+    plugins.withId('java') {
+        apply plugin: 'checkstyle'
+    }
+
+    checkstyle {
+        toolVersion = '10.21.0'
+        configFile = rootProject.file('config/checkstyle/checkstyle.xml')
+    }
 }
