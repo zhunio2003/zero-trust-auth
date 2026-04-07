@@ -1,13 +1,113 @@
 # ============================================================
 # docker-compose.yml — ZeroTrust Auth Platform
-# Implementación completa en TS-01.3 (Docker Compose con redes segmentadas).
 # ============================================================
+services: 
 
-version: "3.9"
+  # ════════════════════════════════════════════
+  # RED: SERVICES — Microservicios + Mensajería
+  # ════════════════════════════════════════════
 
-services: {}
-  # Configuración pendiente — ver TS-01.3
+  
 
+  # ════════════════════════════════════════════
+  # RED: DATA — Bases de datos
+  # ════════════════════════════════════════════
+  postgres-authn:
+    image: postgres:17
+    container_name: postgres-authn
+    networks:
+      - data
+    environment:
+      - POSTGRES_USER=${POSTGRES_AUTHN_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_AUTHN_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_AUTHN_DB}
+    volumes:
+      - postgres_authn_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_AUTHN_USER} -d ${POSTGRES_AUTHN_DB}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  postgres-authz:
+    image: postgres:17
+    container_name: postgres-authz
+    networks:
+      - data
+    environment:
+      - POSTGRES_USER=${POSTGRES_AUTHZ_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_AUTHZ_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_AUTHZ_DB}
+    volumes:
+      - postgres_authz_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_AUTHZ_USER} -d ${POSTGRES_AUTHZ_DB}"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  mongodb-auditlog:
+    image: mongo:8
+    container_name: mongo-auditlog
+    networks:
+      - data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_AUDIT_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_AUDIT_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_AUDIT_DB}
+    volumes:
+      - mongodb_auditlog_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    
+  mongodb-ml:
+    image: mongo:8
+    container_name: mongo-ml
+    networks:
+      - data
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGODB_ML_USER}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGODB_ML_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGODB_ML_DB}
+    volumes:
+      - mongodb_ml_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  redis:
+    image: redis:8
+    container_name: redis
+    networks:
+      - data  
+    command: ["redis-server", "--requirepass",  "${REDIS_PASSWORD}", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+
+# ════════════════════════════════════════════
+# REDES
+# ════════════════════════════════════════════
 networks:
   public:
     driver: bridge
@@ -15,5 +115,21 @@ networks:
     driver: bridge
   data:
     driver: bridge
+    internal: true
   monitoring:
     driver: bridge
+    internal: true
+
+# ════════════════════════════════════════════
+# VOLÚMENES
+# ════════════════════════════════════════════
+volumes:
+  kafka_data:
+  postgres_authn_data:
+  postgres_authz_data:
+  mongodb_auditlog_data:
+  mongodb_ml_data:
+  redis_data:
+  prometheus_data:
+  grafana_data:
+
