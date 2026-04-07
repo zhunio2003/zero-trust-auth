@@ -28,6 +28,10 @@
 
 ## What is this?
 
+La plataforma ZeroTrust Auth es una API de autenticación y autorización de nivel empresarial, desarrollada desde cero con una arquitectura de microservicios. Implementa el modelo Zero Trust real: ninguna solicitud se considera confiable por defecto. Cada sesión se verifica continuamente en función de la identidad, el contexto y el comportamiento.
+
+La plataforma ofrece mecanismos de seguridad multicapa, incluyendo MFA, gestión del ciclo de vida de los tokens JWT y limitación de velocidad distribuida. Un motor de detección de anomalías basado en aprendizaje automático monitoriza todos los eventos de autenticación y autorización en tiempo real, calculando una puntuación de confianza por solicitud y alertando a los administradores cuando surgen patrones sospechosos. La observabilidad completa está integrada desde el principio: métricas, datos históricos y un panel de administración en tiempo real proporcionan visibilidad total del sistema en todo momento.
+
 ---
  
 ## Architecture Overview
@@ -38,15 +42,47 @@
  
 ## Key Features
 
+- **Multi-Factor Authentication (MFA)** — soporta TOTP (códigos temporales) y WebAuthn/Passkeys vinculados al dominio legítimo
+- **JWT Lifecycle Management** — tokens firmados con RS256, rotación de refresh tokens y revocación inmediata con blacklist en Redis
+- **Distributed Rate Limiting** — algoritmo Token Bucket implementado desde cero con contadores distribuidos entre instancias
+- **ABAC Authorization** — autorización basada en atributos evaluando rol, departamento, hora, sensibilidad del recurso y score de confianza del ML
+- **ML Anomaly Detection** — cálculo de score de confianza en tiempo real basado en IP, patrones de comportamiento, velocidad de requests e historial del usuario
+- **Immutable Audit Logs** — hash chaining garantiza que cada evento es detectable ante cualquier modificación y tiene valor forense
+- **Real-time Observability** — métricas con Prometheus, dashboards en Grafana y alertas automáticas ante patrones anómalos detectados
+- **Admin Dashboard** — visibilidad completa de sesiones activas, audit logs, políticas ABAC y monitoreo de amenazas en tiempo real
+
 ---
 
 ## Security Model
+
+Esta plataforma implementa un modelo de confianza cero real, creado desde cero: ninguna solicitud se considera de confianza por defecto, y cada acceso se verifica continuamente.
+La seguridad se aplica en múltiples niveles:
+
+- **Identity verification** — MFA obligatorio con TOTP y WebAuthn. Sin segundo factor no hay acceso.
+- **Token security** — JWTs firmados con RS256. Tokens con algoritmo none o firmas inválidas son rechazados explícitamente. Revocación inmediata en Redis ante cierre de sesión o detección de token reuse attack.
+- **Authorization** — políticas ABAC evaluadas en cada request combinando atributos del usuario, contexto y score de confianza del ML. Denegación por defecto ante cualquier caso no cubierto.
+- **Rate limiting** — algoritmo Token Bucket distribuido limita requests por IP. Primer filtro antes de cualquier verificación de credenciales.
+- **Audit integrity** — hash chaining en cada evento de auditoría. Cualquier modificación rompe la cadena y es detectable.
+- **Error handling** — mensajes de error genéricos al cliente. Ninguna respuesta expone estructura interna, nombres de tablas ni stack traces.
+- **Transport** — CORS estricto configurado en el API Gateway. WebAuthn vincula la autenticación al dominio legítimo.
 
 > **Deep dive:** [Threat Model — STRIDE](docs/security/THREAT-MODEL_STRIDE_ZEROTRUST.md)
  
 ---
 
 ## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Java 21 + Spring Boot 4.0.4 |
+| ML / Policy Engine | Python 3.12 + FastAPI |
+| Messaging | Apache Kafka 3.9 (KRaft) |
+| Relational DB | PostgreSQL 16 |
+| Document DB | MongoDB 7 |
+| Cache / Sessions | Redis 7 |
+| Observability | Prometheus + Grafana + OpenTelemetry |
+| Containers | Docker + Docker Compose |
+| CI/CD | GitHub Actions |
 
 > **Deep dive:** [Technology Stack](docs/stack/TECHNOLOGY_STACK_ZEROTRUST.md)
  
@@ -104,13 +140,77 @@ Each microservice owns its own database (database-per-service principle). No ser
  
 ## Getting Started
 
+### Prerequisites
+
+- Docker + Docker Compose
+- Git
+
+### Installation
+
+1. Clone the repository
+```bash
+   git clone https://github.com/zhunio2003/zero-trust-auth.git
+   cd zero-trust-auth
+```
+
+2. Configure environment variables
+```bash
+   cp .env.example .env
+   # Edit .env with your values
+```
+
+3. Generate RSA keys for JWT signing
+```bash
+   chmod +x scripts/generate-keys.sh
+   ./scripts/generate-keys.sh
+```
+
+4. Start all services
+```bash
+   docker compose up
+```
+
+5. Verify the system is running
+```bash
+   curl http://localhost:8080/health
+```
+### Access points
+
+| Service | URL |
+|---------|-----|
+| API Gateway | http://localhost:8080 |
+| Admin Dashboard | http://localhost:80 |
+| Grafana | http://localhost:3000 |
+
 ---
  
 ## API Reference
 
+Full API documentation is available via Swagger UI once the system is running:
+
+| Service | Swagger UI |
+|---------|-----------|
+| API Gateway | http://localhost:8080/swagger-ui.html |
+| Auth Service | http://localhost:8081/swagger-ui.html |
+| Authorization Service | http://localhost:8082/swagger-ui.html |
+| Audit Log Service | http://localhost:8083/swagger-ui.html |
+| ML / Policy Engine | http://localhost:8000/docs |
+
 ---
  
 ## Testing
+
+Each service has unit tests and integration tests. To run all tests locally:
+```bash
+# Java services
+./gradlew test
+
+# Python service
+cd services/ml-policy-engine
+pytest tests/ -v
+```
+
+The CI pipeline runs all tests automatically on every push.
 
 > **Deep dive:** [Definition of Done](docs/product/DEFINITION_OF_DONE_ZEROTRUST.md)
  
@@ -118,11 +218,34 @@ Each microservice owns its own database (database-per-service principle). No ser
  
 ## Deployment
 
+El sistema se ejecuta completamente en contenedores con Docker Compose a través de 4 redes segmentadas:
+
+| Network | Purpose | Containers |
+|---------|---------|-----------|
+| `public` | External traffic | frontend, api-gateway |
+| `services` | Inter-service communication | microservices, kafka |
+| `data` | Database access (internal) | microservices, databases |
+| `monitoring` | Metrics collection (internal) | microservices, prometheus, grafana |
+
+Solo `api-gateway` (:8080) y `frontend` (:80) están expuestos al host. Todos los demás contenedores operan exclusivamente en redes internas.
+
 > **Deep dive:** [Diagrama de Despliegue](docs/diagrams/DEPLOYMENT_DIAGRAM.mermaid)
  
 ---
  
 ## Documentation
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Product Vision Board](docs/product/PRODUCT_VISION_ZEROTRUST.md) | Project overview, user profiles and goals |
+| [Threat Model — STRIDE](docs/security/THREAT-MODEL_STRIDE_ZEROTRUST.md) | 9 threats identified and mitigated |
+| [Technology Stack](docs/stack/TECHNOLOGY_STACK_ZEROTRUST.md) | Stack decisions with justification |
+| [Detailed Architecture](docs/architecture/DETAILED_ARCHITECTURE.md) | Microservices, data flow and principles |
+| [Component Diagram](docs/architecture/DETAIL_COMPONENT_DIAGRAM.md) | Components per service |
+| [Deployment Diagram](docs/architecture/DETAIL_DEPLOYMENT_DIAGRAM.md) | Docker networks and containers |
+| [Definition of Done](docs/product/DEFINITION_OF_DONE_ZEROTRUST.md) | 31 verification points across 3 levels |
+| [ADRs](docs/adr/) | Architecture Decision Records |
 
 ---
  
