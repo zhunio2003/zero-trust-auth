@@ -6,7 +6,7 @@
 rootProject.name = 'zerotrust-auth-platform'
 
 // Servicios Java + Spring Boot
-include ':services:auth-service'
-include ':services:authz-service'
-include ':services:audit-log-service'
-include ':services:api-gateway'
+include 'services:api-gateway'
+include 'services:auth-service'
+include 'services:authz-service'
+include 'services:audit-log-service'
