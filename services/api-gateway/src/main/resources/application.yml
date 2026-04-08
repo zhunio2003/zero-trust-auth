@@ -1,0 +1,31 @@
+spring:
+    application:
+        name: api-gateway
+    cloud:
+        gateway:
+            server:
+                webmvc:
+                    routes:
+                        - id: auth-service
+                          uri: http://auth-service:8081
+                          predicates:
+                            - Path=/api/auth/**
+                        - id: authz-service
+                          uri: http://authz-service:8082
+                          predicates:
+                            - Path=/api/authz/**
+                        - id: audit-log-service
+                          uri: http://audit-log-service:8083
+                          predicates:
+                            - Path=/api/audit/**
+server:
+    port: 8080
+
+# Cambiar la ruta health
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure: 
+        include:
+        - health
