@@ -2,6 +2,46 @@
 # docker-compose.yml — ZeroTrust Auth Platform
 # ============================================================
 services: 
+  # ════════════════════════════════════════════
+  # RED: PUBLIC — Tráfico externo
+  # ════════════════════════════════════════════
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    ports:
+      - "80:80"
+    networks:
+      - public
+    restart: unless-stopped
+
+  api-gateway:
+    build: 
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    networks:
+      - services
+      - public
+    ports:
+      - "8080:8080"
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      authz-service:
+        condition: service_healthy
+      audit-log-service:
+        condition: service_healthy
+    environment:
+      - AUTH_SERVICE_URL=http://auth-service:8081
+      - AUTHZ_SERVICE_URL=http://authz-service:8082
+      - AUDIT_SERVICE_URL=http://audit-log-service:8083
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
 
   # ════════════════════════════════════════════
   # RED: SERVICES — Microservicios + Mensajería
