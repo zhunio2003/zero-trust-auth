@@ -1,0 +1,23 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'auth-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['auth-service:8081']
+  
+  - job_name: 'authz-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['authz-service:8082']
+  
+  - job_name: 'ml-policy-engine'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['ml-policy-engine:8000']
+
+  - job_name: 'audit-log-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['audit-log-service:8083']

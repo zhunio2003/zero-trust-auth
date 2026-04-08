@@ -168,20 +168,21 @@ services:
       # KRaft mode
       - KAFKA_NODE_ID=1
       - KAFKA_PROCESS_ROLES=broker,controller
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,LOCAL://localhost:9094
+      - KAFKA_LISTENERS=PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093,LOCAL://localhost:9094
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,LOCAL:PLAINTEXT
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
       - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
       - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
       - KAFKA_LOG_DIRS=/var/lib/kafka/data
       - CLUSTER_ID=zerotrust-kafka-cluster-01
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
     volumes:
       - kafka_data:/var/lib/kafka/data
     healthcheck:
-      test: ["CMD", "kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9092"]
+      test: ["CMD", "/opt/kafka/bin/kafka-broker-api-versions.sh", "--bootstrap-server", "localhost:9094"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -241,7 +242,7 @@ services:
     volumes:
       - mongodb_auditlog_data:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      test: ["CMD", "mongosh", "--username", "${MONGODB_AUDIT_USER}", "--password", "${MONGODB_AUDIT_PASSWORD}","--eval", "db.adminCommand('ping')"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -299,7 +300,7 @@ services:
       - "--storage.tsdb.path=/prometheus"
       - "--web.enable-lifecycle"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9090/-/healthy"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
       interval: 30s
       timeout: 5s
       retries: 5
