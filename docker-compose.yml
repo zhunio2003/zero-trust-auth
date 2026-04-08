@@ -16,8 +16,8 @@ services:
 
   api-gateway:
     build: 
-      context: ./services/api-gateway
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
     container_name: api-gateway
     networks:
       - services
@@ -48,8 +48,8 @@ services:
   # ════════════════════════════════════════════
   auth-service:
     build:
-      context: ./services/auth-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/auth-service/Dockerfile
     container_name: auth-service
     networks:
       - services 
@@ -81,8 +81,8 @@ services:
   
   authz-service:
     build:
-      context: ./services/authz-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/authz-service/Dockerfile
     container_name: authz-service
     networks:
       - services 
@@ -111,8 +111,8 @@ services:
   
   ml-policy-engine:
     build:
-      context: ./services/ml-policy-engine
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/ml-policy-engine/Dockerfile
     container_name: ml-policy-engine
     networks:
       - services 
@@ -136,8 +136,8 @@ services:
   
   audit-log-service:
     build:
-      context: ./services/audit-log-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/audit-log-service/Dockerfile
     container_name: audit-log-service
     networks:
       - services 
