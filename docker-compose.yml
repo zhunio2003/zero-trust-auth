@@ -6,6 +6,119 @@ services:
   # ════════════════════════════════════════════
   # RED: SERVICES — Microservicios + Mensajería
   # ════════════════════════════════════════════
+  auth-service:
+    build:
+      context: ./services/auth-service
+      dockerfile: Dockerfile
+    container_name: auth-service
+    networks:
+      - services 
+      - data
+      - monitoring
+    depends_on:
+      mongodb-ml:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-authn:5432/${POSTGRES_AUTHN_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_AUTHN_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_AUTHN_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - JWT_PRIVATE_KEY_PATH=${JWT_PRIVATE_KEY_PATH}
+      - JWT_PUBLIC_KEY_PATH=${JWT_PUBLIC_KEY_PATH}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  authz-service:
+    build:
+      context: ./services/authz-service
+      dockerfile: Dockerfile
+    container_name: authz-service
+    networks:
+      - services 
+      - data
+      - monitoring
+    depends_on:
+      postgres-authz:
+        condition: service_healthy
+      ml-policy-engine:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-authz:5432/${POSTGRES_AUTHZ_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_AUTHZ_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_AUTHZ_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - ML_POLICY_ENGINE_URL=http://ml-policy-engine:8000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  ml-policy-engine:
+    build:
+      context: ./services/ml-policy-engine
+      dockerfile: Dockerfile
+    container_name: ml-policy-engine
+    networks:
+      - services 
+      - data
+      - monitoring
+    depends_on:
+      mongodb-ml:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - MONGODB_URL=mongodb://${MONGODB_ML_USER}:${MONGODB_ML_PASSWORD}@mongodb-ml:27017/${MONGODB_ML_DB}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  audit-log-service:
+    build:
+      context: ./services/audit-log-service
+      dockerfile: Dockerfile
+    container_name: audit-log-service
+    networks:
+      - services 
+      - data
+      - monitoring
+    depends_on:
+      mongodb-auditlog:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      - MONGODB_URL=mongodb://${MONGODB_AUDIT_USER}:${MONGODB_AUDIT_PASSWORD}@mongodb-auditlog:27017/${MONGODB_AUDIT_DB}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+  
+  
+
   kafka: 
     image: apache/kafka:3.9.0
     container_name: kafka
