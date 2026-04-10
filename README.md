@@ -1,25 +1,57 @@
 <div align="center">
-    <h1>ZEROTRUST — Plataforma de Predicción Especializada</h1>
-    <img src="docs/brand/logo-zerotrust.png" alt="logo zerotrust" width="900">
-    <br/><br/>
-    <img src="https://img.shields.io/badge/React-planned-61DAFB?logo=react&logoColor=black" alt="React"/>    <br/>
-    <img src="https://img.shields.io/badge/Java-21-orange" alt="Java"/>
-    <img src="https://img.shields.io/badge/Spring%20Boot-4.0.4-green" alt="Spring Boot"/>
-    <img src="https://img.shields.io/badge/Python-3.12.4-blue" alt="Python"/>
-    <img src="https://img.shields.io/badge/FastAPI-latest-teal" alt="FastAPI"/>
-    <br/>
-    <img src="https://img.shields.io/badge/MongoDB-8-47A248?logo=mongodb&logoColor=white" alt="MongoDB"/>
-    <img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
-    <img src="https://img.shields.io/badge/Redis-8-DC382D?logo=redis&logoColor=white" alt="Redis"/>
-    <img src="https://img.shields.io/badge/Apache%20Kafka-3.7-231F20?logo=apachekafka&logoColor=white" alt="Apache Kafka"/>
-    <br/>
-    <img src="https://img.shields.io/badge/Prometheus-2.53-E6522C?logo=prometheus&logoColor=white" alt="Prometheus"/>
-    <img src="https://img.shields.io/badge/Grafana-11-F46800?logo=grafana&logoColor=white" alt="Grafana"/>
-    <img src="https://img.shields.io/badge/OpenTelemetry-1.39-7B61FF?logo=opentelemetry&logoColor=white" alt="OpenTelemetry"/>
-    <br/>
-    <img src="https://img.shields.io/badge/Docker-Compose-2496ED" alt="Docker"/>
-    <img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions"/>
-    <br/><br/>
+    <h1>ZEROTRUST — Enterprise Authentication & Authorization Platform</h1>
+<img src="docs/brand/logo-zerotrust.png" alt="logo zerotrust" width="900">
+<br/><br/>
+
+<img src="https://img.shields.io/badge/React-planned-61DAFB?logo=react&logoColor=black" alt="React"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white" alt="Java"/>
+<img src="https://img.shields.io/badge/Spring%20Boot-4.0.4-6DB33F?logo=springboot&logoColor=white" alt="Spring Boot"/>
+<img src="https://img.shields.io/badge/Spring%20Cloud-2025.1.1-6DB33F?logo=spring&logoColor=white" alt="Spring Cloud"/>
+<img src="https://img.shields.io/badge/Spring%20Security-planned-6DB33F?logo=springsecurity&logoColor=white" alt="Spring Security"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white" alt="Python"/>
+<img src="https://img.shields.io/badge/FastAPI-latest-009688?logo=fastapi&logoColor=white" alt="FastAPI"/>
+<img src="https://img.shields.io/badge/scikit--learn-planned-F7931E?logo=scikitlearn&logoColor=white" alt="scikit-learn"/>
+<br/>
+
+<img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" alt="PostgreSQL"/>
+<img src="https://img.shields.io/badge/MongoDB-8-47A248?logo=mongodb&logoColor=white" alt="MongoDB"/>
+<img src="https://img.shields.io/badge/Redis-8-DC382D?logo=redis&logoColor=white" alt="Redis"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Apache%20Kafka-3.9.0%20KRaft-231F20?logo=apachekafka&logoColor=white" alt="Apache Kafka"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Prometheus-latest-E6522C?logo=prometheus&logoColor=white" alt="Prometheus"/>
+<img src="https://img.shields.io/badge/Grafana-latest-F46800?logo=grafana&logoColor=white" alt="Grafana"/>
+<img src="https://img.shields.io/badge/OpenTelemetry-planned-7B61FF?logo=opentelemetry&logoColor=white" alt="OpenTelemetry"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Docker%20Compose-latest-2496ED?logo=docker&logoColor=white" alt="Docker Compose"/>
+<img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?logo=githubactions&logoColor=white" alt="GitHub Actions"/>
+<img src="https://img.shields.io/badge/Gradle-9.4.1-02303A?logo=gradle&logoColor=white" alt="Gradle"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Checkstyle-Google%20Style-FF6F00" alt="Checkstyle"/>
+<img src="https://img.shields.io/badge/Flake8-Python%20Linter-3776AB" alt="Flake8"/>
+<img src="https://img.shields.io/badge/JUnit-5-25A162?logo=junit5&logoColor=white" alt="JUnit"/>
+<img src="https://img.shields.io/badge/Pytest-latest-0A9EDC?logo=pytest&logoColor=white" alt="Pytest"/>
+<img src="https://img.shields.io/badge/Mockito-latest-78A641" alt="Mockito"/>
+<br/>
+
+<img src="https://img.shields.io/badge/JWT-RS256-000000?logo=jsonwebtokens&logoColor=white" alt="JWT RS256"/>
+<img src="https://img.shields.io/badge/TOTP-RFC%206238-2C3E50" alt="TOTP"/>
+<img src="https://img.shields.io/badge/WebAuthn-Passkeys-4285F4?logo=webauthn&logoColor=white" alt="WebAuthn"/>
+<img src="https://img.shields.io/badge/ABAC-Authorization-8E44AD" alt="ABAC"/>
+<img src="https://img.shields.io/badge/STRIDE-Threat%20Model-C0392B" alt="STRIDE"/>
+<br/>
+
+<img src="https://img.shields.io/badge/Swagger-OpenAPI-85EA2D?logo=swagger&logoColor=black" alt="Swagger"/>
+<img src="https://img.shields.io/badge/Nginx-planned-009639?logo=nginx&logoColor=white" alt="Nginx"/>
+<br/><br/>
 </div>
 
 > Enterprise-grade authentication & authorization platform built from scratch with microservices architecture. Implements real Zero Trust: every request is verified continuously based on identity, context, and behavior.
