@@ -203,6 +203,7 @@ services:
       - POSTGRES_DB=${POSTGRES_AUTHN_DB}
     volumes:
       - postgres_authn_data:/var/lib/postgresql/data
+      - ./infra/db/postgres-authn/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_AUTHN_USER} -d ${POSTGRES_AUTHN_DB}"]
       interval: 30s
