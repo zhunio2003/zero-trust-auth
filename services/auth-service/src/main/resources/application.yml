@@ -2,13 +2,22 @@ spring:
   application:
     name: auth-service
   datasource:
-    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
-    driver-class-name: org.h2.Driver
-    username: sa
-    password: 12345
+    url: jdbc:postgresql://postgres-authn:5432/authn_db
+    driver-class-name: org.postgresql.Driver
+    username: ${POSTGRES_AUTHN_USER}
+    password: ${POSTGRES_AUTHN_PASSWORD}
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-  autoconfigure:
-    exclude: 
-      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
-      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+  data:
+    redis:
+      host: redis
+      port: 6379
+      password: ${REDIS_PASSWORD}
+  kafka:
+    bootstrap-servers: kafka:9092
+
+server:
+  port: 8081
+
