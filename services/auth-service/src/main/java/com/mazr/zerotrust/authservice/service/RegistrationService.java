@@ -26,7 +26,7 @@ public class RegistrationService {
     
     User user = User.builder()
       .email(dto.getEmail())
-      .password(passwordEncoder.encode(dto.getPassword()))
+      .passwordHash(passwordEncoder.encode(dto.getPassword()))
       .role(dto.getRole())
       .department(dto.getDepartment())
       .enabled(true)

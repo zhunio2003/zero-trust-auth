@@ -45,7 +45,7 @@ class RegistrationServiceTest {
 
     User saved = User.builder()
       .id(UUID.randomUUID())
-      .password("hashedPassword")
+      .passwordHash("hashedPassword")
       .email("test@example.com")
       .department("Engineering")
       .role("USER")
@@ -96,7 +96,7 @@ class RegistrationServiceTest {
     User saved = User.builder()
       .id(UUID.randomUUID())
       .email("test@example.com")
-      .password("hashedPassword")
+      .passwordHash("hashedPassword")
       .role("USER")
       .department("Engineering")
       .enabled(true)
