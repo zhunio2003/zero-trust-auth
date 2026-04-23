@@ -24,7 +24,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "totp_credentials")
-public class totpCredential {
+public class TotpCredential {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
