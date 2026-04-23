@@ -21,5 +21,6 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'dev.samstevens.totp:totp-spring-boot-starter:1.7.1'
 }
 
