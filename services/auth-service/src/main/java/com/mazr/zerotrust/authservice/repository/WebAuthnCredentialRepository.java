@@ -9,7 +9,6 @@ import com.mazr.zerotrust.authservice.model.entity.WebauthnCredential;
 
 public interface WebAuthnCredentialRepository extends JpaRepository<WebauthnCredential, UUID>{
 
-
   Optional<WebauthnCredential> findByUserId(UUID userId);
   Optional<WebauthnCredential> findByCredentialId(String credentialId);
 
