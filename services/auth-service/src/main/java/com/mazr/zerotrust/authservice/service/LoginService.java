@@ -24,7 +24,7 @@ public class LoginService {
 
   public LoginResponse login(LoginRequest dto) {
     var user = userRepository.findByEmail(dto.getEmail())
-        .orElseThrow(() -> new InvalidCredentialsException());
+        .orElseThrow(InvalidCredentialsException::new);
 
     if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
         throw new InvalidCredentialsException();
@@ -37,7 +37,6 @@ public class LoginService {
         user.getId().toString(),
         Duration.ofMinutes(5)
     );
-
 
     return LoginResponse.builder()
         .mfaSessionToken(mfaSessionToken)
