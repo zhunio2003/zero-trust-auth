@@ -122,6 +122,9 @@ La seguridad se aplica en múltiples niveles:
  
 ## Project Structure
 
+<details>
+<summary><strong>Repository layout</strong> (click to expand)</summary>
+
 ```
 zero-trust-auth/
 │
@@ -165,6 +168,8 @@ zero-trust-auth/
 ├── settings.gradle                  # Gradle monorepo subproject definitions
 └── README.md
 ```
+
+</details>
  
 Each microservice owns its own database (database-per-service principle). No service accesses another service's storage directly. Communication between services follows the synchronous flow `Gateway → AuthN → AuthZ → Policy Engine`, with asynchronous event publishing to Kafka for audit logging and ML training.
  
