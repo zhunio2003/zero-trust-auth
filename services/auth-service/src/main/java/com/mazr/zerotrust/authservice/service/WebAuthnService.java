@@ -133,10 +133,8 @@ public class WebAuthnService {
             throw new InvalidCredentialsException();
         }
 
-    } catch (InvalidCredentialsException e) {
-      throw new InvalidCredentialsException();
     } catch (Exception e) {
-      throw new RuntimeException(e);
+      throw new InvalidCredentialsException();
     }
   }
 
