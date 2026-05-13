@@ -26,6 +26,6 @@ management:
   endpoints:
     web:
       base-path: /
-      exposure: 
+      exposure:
         include:
         - health
