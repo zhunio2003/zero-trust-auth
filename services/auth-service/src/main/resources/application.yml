@@ -21,3 +21,8 @@ spring:
 server:
   port: 8081
 
+jwt:
+  private-key: ${JWT_PRIVATE_KEY}
+  public-key: ${JWT_PUBLIC_KEY}
+  access-token-expiry: ${JWT_ACCESS_TOKEN_EXPIRY:15m}
+  refresh-token-expiry: ${JWT_REFRESH_TOKEN_EXPIRY:7d}
