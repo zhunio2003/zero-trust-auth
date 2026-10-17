@@ -2,6 +2,8 @@ package com.mazr.zerotrust.authservice.service;
 
 import java.util.UUID;
 
+import com.mazr.zerotrust.authservice.model.entity.User;
+import com.mazr.zerotrust.authservice.repository.UserRepository;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +34,9 @@ public class TotpService {
 
   private final TotpCredentialRepository totpCredentialRepository;
   private final StringRedisTemplate redisTemplate;
+  private final JwtService jwtService;
+  private final RefreshTokenService refreshTokenService;
+  private final UserRepository userRepository;
 
   public TotpSetupResponse setup(TotpSetupRequest dto) {
 
@@ -64,14 +69,14 @@ public class TotpService {
 
       return TotpSetupResponse.builder()
         .secret(secret)
-        .qrCodeUrl(qrCodeUrl)       
+        .qrCodeUrl(qrCodeUrl)
         .build();
 
 
     } catch (Exception e) {
 
       throw new RuntimeException("Error Generate QR", e);
-      
+
     }
 
   }
@@ -82,7 +87,7 @@ public class TotpService {
 
     TotpCredential credential = totpCredentialRepository.findByUserId(userId)
         .orElseThrow(InvalidCredentialsException::new);
-    
+
     if (!validateCode(credential.getSecret(), dto.getTotpCode())) {
       throw new InvalidCredentialsException();
     }
@@ -105,20 +110,24 @@ public class TotpService {
     if(!credential.isVerified()) {
         throw new InvalidCredentialsException();
     }
-    
+
     if (!validateCode(credential.getSecret(), dto.getTotpCode())) {
       throw new InvalidCredentialsException();
     }
 
     redisTemplate.delete("mfa:" + dto.getMfaSessionToken());
 
+    User user = userRepository.findById(userId).orElseThrow(InvalidCredentialsException::new);
+
+    String accessToken = jwtService.generateToken(user);
+    String refreshToken = refreshTokenService.generateRefreshToken(userId);
+
     return MfaVerifyResponse.builder()
-      .message("MFA verified correctly")
+        .message("MFA verified correctly")
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
       .build();
   }
-
-
-  
 
   private UUID resolveUserId(String mfaSessionToken) {
 
@@ -129,7 +138,7 @@ public class TotpService {
     }
 
     return UUID.fromString(userId);
-    
+
   }
 
   private boolean validateCode(String secret, String code) {

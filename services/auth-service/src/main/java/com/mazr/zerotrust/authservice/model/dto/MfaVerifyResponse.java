@@ -9,6 +9,8 @@ import lombok.Setter;
 @Builder
 public class MfaVerifyResponse {
 
-  private String message;    
+  private String message;
+  private String accessToken;
+  private String refreshToken;
 
 }
