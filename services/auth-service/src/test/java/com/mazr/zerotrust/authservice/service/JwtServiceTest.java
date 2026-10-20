@@ -10,18 +10,21 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 public class JwtServiceTest {
 
     @Mock
@@ -72,7 +75,23 @@ public class JwtServiceTest {
             assertEquals("IT", claims.get("department"));
             assertNotNull(claims.getExpiration());
             assertNotNull(claims.getIssuedAt());
-
     }
+
+    @Test
+    public void  tokenNone() {
+
+        String tokenFase = "eyJhbGciOiJub25lIn0." + Base64.getEncoder().encodeToString("{}".getBytes()) + ".";
+
+        assertThrows(Exception.class, () -> {
+                Jwts.parser()
+                    .verifyWith(rsaKeyProperties.getPublicKey())
+                    .build()
+                    .parseSignedClaims(tokenFase)
+                    .getPayload();
+            }
+        );
+    }
+
+
 
 }
