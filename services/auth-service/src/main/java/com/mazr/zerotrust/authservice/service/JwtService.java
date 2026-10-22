@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +27,8 @@ public class JwtService {
           .claim("department", user.getDepartment())
           .issuedAt(new Date())
           .expiration(new Date(System.currentTimeMillis() + accessTokenExpiry.toMillis()))
-          .signWith(rsaKeyProperties.getPrivateKey())
+          .id(UUID.randomUUID().toString())
+          .signWith(rsaKeyProperties.getPrivateKey(), Jwts.SIG.RS256)
           .compact();
   }
 }
