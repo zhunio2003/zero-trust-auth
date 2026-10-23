@@ -31,6 +31,7 @@ public class JwtValidator {
             requirePresent(claims.getIssuedAt());
             requirePresent(claims.get("role", String.class));
             requirePresent(claims.get("department", String.class));
+            requirePresent(claims.getId());
             return claims;
         }  catch (JwtException | IllegalArgumentException e) {
             throw new InvalidTokenException(e);
