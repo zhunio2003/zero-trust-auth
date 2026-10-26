@@ -1,5 +1,5 @@
 // ============================================================
-// build.gradle — ZeroTrust Auth Platform (Raíz)
+// build.gradle — ZeroTrust Auth Platform
 // Configuración compartida para todos los subproyectos Java.
 // ============================================================
 
@@ -26,7 +26,7 @@ subprojects {
         mavenCentral()
     }
 
-    // Dependencias compartidas por todos los servicios Java
+    // Las dependencias compartidas por todos los servicios Java
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-actuator'
