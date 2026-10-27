@@ -107,7 +107,7 @@ public class TotpService {
     TotpCredential credential = totpCredentialRepository.findByUserId(userId)
         .orElseThrow(InvalidCredentialsException::new);
 
-    if(!credential.isVerified()) {
+    if (!credential.isVerified()) {
         throw new InvalidCredentialsException();
     }
 

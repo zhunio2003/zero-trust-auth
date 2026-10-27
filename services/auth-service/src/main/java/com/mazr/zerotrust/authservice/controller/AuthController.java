@@ -56,26 +56,28 @@ public class AuthController {
       return ResponseEntity.ok(totpService.verify(dto));
   }
 
-  @PostMapping("webauthn/register/init")
-  public ResponseEntity<WebAuthnRegistrationInitResponse>  initRegistration(@Valid @RequestBody WebAuthnRegistrationInitRequest dto) {
+  @PostMapping("/webauthn/register/init")
+  public ResponseEntity<WebAuthnRegistrationInitResponse> initRegistration(
+      @Valid @RequestBody WebAuthnRegistrationInitRequest dto) {
       return ResponseEntity.ok(webAuthnService.initializeRegistration(dto));
   }
 
-  @PostMapping("webauthn/register/complete")
-  public ResponseEntity<WebAuthnRegistrationResponse> completeRegistration(@Valid @RequestBody WebAuthnRegistrationCompleteRequest dto) {
+  @PostMapping("/webauthn/register/complete")
+  public ResponseEntity<WebAuthnRegistrationResponse> completeRegistration(
+      @Valid @RequestBody WebAuthnRegistrationCompleteRequest dto) {
       return ResponseEntity.ok(webAuthnService.completeRegistration(dto));
   }
 
-  @PostMapping("webauthn/authenticate/init")
-  public ResponseEntity<WebAuthnAuthenticationResponse> initAuthentication(@Valid @RequestBody WebAuthnAuthenticationRequest dto) {
+  @PostMapping("/webauthn/authenticate/init")
+  public ResponseEntity<WebAuthnAuthenticationResponse> initAuthentication(
+      @Valid @RequestBody WebAuthnAuthenticationRequest dto) {
       return ResponseEntity.ok(webAuthnService.initiateAuthentication(dto));
   }
 
-  @PostMapping("webauthn/authenticate/complete")
-  public ResponseEntity<MfaVerifyResponse>  completeAuthentication(@Valid @RequestBody WebAuthnAuthenticationCompleteRequest dto) {
+  @PostMapping("/webauthn/authenticate/complete")
+  public ResponseEntity<MfaVerifyResponse> completeAuthentication(
+      @Valid @RequestBody WebAuthnAuthenticationCompleteRequest dto) {
       return ResponseEntity.ok(webAuthnService.completeAuthentication(dto));
   }
-
-
 
 }

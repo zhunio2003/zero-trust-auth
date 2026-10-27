@@ -25,7 +25,7 @@ public class RefreshTokenService {
     public UUID getUserIdFromRefreshToken(String token) {
 
         String userId = redisTemplate.opsForValue().get("refresh:" + token);
-        if(userId == null) {
+        if (userId == null) {
             throw new InvalidCredentialsException();
         }
         return UUID.fromString(userId);
