@@ -1,7 +1,7 @@
 # ============================================================
 # docker-compose.yml — ZeroTrust Auth Platform
 # ============================================================
-services: 
+services:
   # ════════════════════════════════════════════
   # RED: PUBLIC — Tráfico externo
   # ════════════════════════════════════════════
@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   api-gateway:
-    build: 
+    build:
       context: .
       dockerfile: services/api-gateway/Dockerfile
     container_name: api-gateway
@@ -52,7 +52,7 @@ services:
       dockerfile: services/auth-service/Dockerfile
     container_name: auth-service
     networks:
-      - services 
+      - services
       - data
       - monitoring
     depends_on:
@@ -78,14 +78,14 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   authz-service:
     build:
       context: .
       dockerfile: services/authz-service/Dockerfile
     container_name: authz-service
     networks:
-      - services 
+      - services
       - data
       - monitoring
     depends_on:
@@ -108,14 +108,14 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   ml-policy-engine:
     build:
       context: .
       dockerfile: services/ml-policy-engine/Dockerfile
     container_name: ml-policy-engine
     networks:
-      - services 
+      - services
       - data
       - monitoring
     depends_on:
@@ -133,14 +133,14 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   audit-log-service:
     build:
       context: .
       dockerfile: services/audit-log-service/Dockerfile
     container_name: audit-log-service
     networks:
-      - services 
+      - services
       - data
       - monitoring
     depends_on:
@@ -159,7 +159,7 @@ services:
       start_period: 20s
     restart: unless-stopped
 
-  kafka: 
+  kafka:
     image: apache/kafka:3.9.0
     container_name: kafka
     networks:
@@ -195,6 +195,8 @@ services:
   postgres-authn:
     image: postgres:17
     container_name: postgres-authn
+    ports:
+      - "127.0.0.1:5432:5432"
     networks:
       - data
     environment:
@@ -230,7 +232,7 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   mongodb-auditlog:
     image: mongo:8
     container_name: mongo-auditlog
@@ -249,7 +251,7 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-    
+
   mongodb-ml:
     image: mongo:8
     container_name: mongo-ml
@@ -268,12 +270,14 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   redis:
     image: redis:8
     container_name: redis
+    ports:
+      - "127.0.0.1:6379:6379"
     networks:
-      - data  
+      - data
     command: ["redis-server", "--requirepass",  "${REDIS_PASSWORD}", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
@@ -284,7 +288,7 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   # ════════════════════════════════════════════
   # RED: MONITORING — Observabilidad
   # ════════════════════════════════════════════
@@ -307,7 +311,7 @@ services:
       retries: 5
       start_period: 20s
     restart: unless-stopped
-  
+
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
