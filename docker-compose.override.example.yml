@@ -1,0 +1,19 @@
+# docker-compose.override.yml — SOLO desarrollo local (no usar en producción)
+services:
+  postgres-authn:
+    networks:
+      - data
+      - dev-host
+    ports:
+      - "127.0.0.1:5432:5432"
+
+  redis:
+    networks:
+      - data
+      - dev-host
+    ports:
+      - "127.0.0.1:6379:6379"
+
+networks:
+  dev-host:
+    driver: bridge
