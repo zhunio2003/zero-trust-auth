@@ -1,6 +1,6 @@
 <div align="center">
     <h1>ZEROTRUST — Enterprise Authentication & Authorization Platform</h1>
-<img src="docs/brand/logo-zero.png" alt="logo zerotrust" width="900">
+<img src="docs/brand/logo-zero.jpeg" alt="logo zerotrust" width="900">
 <br/><br/>
 
 <img src="https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white" alt="Java"/>
