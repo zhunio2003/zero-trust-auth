@@ -2,7 +2,6 @@ package com.mazr.zerotrust.authservice.service;
 
 import com.mazr.zerotrust.authservice.exception.InvalidCredentialsException;
 import com.mazr.zerotrust.authservice.model.dto.MfaVerifyRequest;
-import com.mazr.zerotrust.authservice.model.dto.MfaVerifyResponse;
 import com.mazr.zerotrust.authservice.model.dto.TotpSetupRequest;
 import com.mazr.zerotrust.authservice.model.dto.TotpSetupResponse;
 import com.mazr.zerotrust.authservice.model.entity.TotpCredential;
