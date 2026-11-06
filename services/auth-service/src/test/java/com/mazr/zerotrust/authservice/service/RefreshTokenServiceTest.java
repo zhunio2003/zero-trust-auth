@@ -18,7 +18,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class RefreshTokenServiceTest {
+class RefreshTokenServiceTest {
 
     @Mock
     private StringRedisTemplate redisTemplate;
@@ -32,13 +32,13 @@ public class RefreshTokenServiceTest {
     private UUID userId;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         userId = UUID.randomUUID();
         when(redisTemplate.opsForValue()).thenReturn(valueOps);
     }
 
     @Test
-    public void existsToken() {
+    void existsToken() {
 
         String refreshToken = refreshTokenService.generateRefreshToken(userId);
 
