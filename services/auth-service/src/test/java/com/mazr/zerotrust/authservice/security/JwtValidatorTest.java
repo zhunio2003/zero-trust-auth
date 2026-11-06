@@ -1,9 +1,11 @@
 package com.mazr.zerotrust.authservice.security;
 
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,6 +17,8 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 
@@ -38,6 +42,22 @@ class JwtValidatorTest {
         when(rsaKeyProperties.getPublicKey()).thenReturn(keyPair.getPublic());
 
         jwtValidator = new JwtValidator(rsaKeyProperties);
+
+    }
+
+    @Test
+    void validateToken_withValidToken_returnsClaims() {
+
+        String token = validTokenBuilder()
+            .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
+            .compact();
+
+        Claims claims = jwtValidator.validateToken(token);
+
+        assertEquals("ADMIN", claims.get("role", String.class));
+        assertEquals("IT", claims.get("department", String.class));
+        assertNotNull(claims.getSubject());
+        assertNotNull(claims.getId());
 
     }
 
