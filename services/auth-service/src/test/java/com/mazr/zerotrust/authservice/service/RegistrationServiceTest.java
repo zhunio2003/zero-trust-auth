@@ -78,7 +78,7 @@ class RegistrationServiceTest {
 
     when(userRepository.existsByEmail("existing@example.com")).thenReturn(true);
 
-    assertThrows(EmailAlreadyExistsException.class, 
+    assertThrows(EmailAlreadyExistsException.class,
         () -> registrationService.register(request)
     );
   }
@@ -113,7 +113,5 @@ class RegistrationServiceTest {
     assertEquals("test@example.com", response.getEmail());
 
   }
-
-
 
 }
