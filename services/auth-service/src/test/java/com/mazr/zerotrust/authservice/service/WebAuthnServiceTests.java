@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
-public class WebAuthnServiceTests {
+class WebAuthnServiceTests {
 
   @Mock
   private WebAuthnCredentialRepository webAuthnCredentialRepository;
@@ -35,7 +35,7 @@ public class WebAuthnServiceTests {
   private WebAuthnService webAuthnService;
 
   @Test
-  public void invalidSignature() {
+  void invalidSignature() {
 
     // Arrange
     String mfaSessionToken = "test-token";
