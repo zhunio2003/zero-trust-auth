@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class JwtServiceTest {
+class JwtServiceTest {
 
     @Mock
     private RsaKeyProperties rsaKeyProperties;
@@ -60,7 +60,7 @@ public class JwtServiceTest {
     }
 
     @Test
-    public void tokenSuccessful() {
+    void tokenSuccessful() {
 
         String token = jwtService.generateToken(userTest);
 
@@ -78,7 +78,7 @@ public class JwtServiceTest {
     }
 
     @Test
-    public void  tokenNone() {
+     void  tokenNone() {
 
         String tokenFase = "eyJhbGciOiJub25lIn0." + Base64.getEncoder().encodeToString("{}".getBytes()) + ".";
 
