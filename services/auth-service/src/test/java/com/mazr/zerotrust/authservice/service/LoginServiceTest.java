@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class LoginServiceTest {
+class LoginServiceTest {
 
   @Mock
   private UserRepository userRepository;
@@ -37,7 +37,7 @@ public class LoginServiceTest {
   private LoginService loginService;
 
   @Test
-  public void loginSuccessful() {
+  void loginSuccessful() {
 
     when(redisTemplate.opsForValue()).thenReturn(ops);
 
@@ -63,7 +63,7 @@ public class LoginServiceTest {
   }
 
     @Test
-    public void loginEmailNotExistsThrowsException() {
+    void loginEmailNotExistsThrowsException() {
 
         LoginRequest request = new LoginRequest();
 
@@ -78,7 +78,7 @@ public class LoginServiceTest {
     }
 
     @Test
-    public void loginPasswordIncorrectThrowsException() {
+    void loginPasswordIncorrectThrowsException() {
 
         LoginRequest request = new LoginRequest();
 
