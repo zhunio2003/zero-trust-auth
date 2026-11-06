@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class TotpServiceTest {
+class TotpServiceTest {
 
   @Mock
   private TotpCredentialRepository totpCredentialRepository;
@@ -37,7 +37,7 @@ public class TotpServiceTest {
   private TotpService totpService;
 
   @Test
-  public void toptSetupSuccessful() {
+  void toptSetupSuccessful() {
 
     // Arrange
     String mfaSessionToken = "test-session-token";
@@ -52,14 +52,14 @@ public class TotpServiceTest {
     // Act
     TotpSetupResponse response = totpService.setup(request);
 
-    // ssert
+    // assert
     assertNotNull(response.getSecret());
     assertNotNull(response.getQrCodeUrl());
 
   }
 
     @Test
-    public void totpVerifyInvalidCodeThrowsException() {
+    void totpVerifyInvalidCodeThrowsException() {
 
         // Arrange
         String mfaSessionToken = "test-session-token";
@@ -87,7 +87,7 @@ public class TotpServiceTest {
     }
 
     @Test
-    public void totpSessionExpiredThrowsException() {
+    void totpSessionExpiredThrowsException() {
 
         // Arrange
         String mfaSessionToken = "expired-token";
