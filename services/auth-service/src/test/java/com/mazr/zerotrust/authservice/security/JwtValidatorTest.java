@@ -1,6 +1,7 @@
 package com.mazr.zerotrust.authservice.security;
 
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
+import com.mazr.zerotrust.authservice.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -17,8 +18,7 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 
@@ -59,6 +59,16 @@ class JwtValidatorTest {
         assertNotNull(claims.getSubject());
         assertNotNull(claims.getId());
 
+    }
+
+    @Test
+    void validateToken_withRs512Algorithm_throwsInvalidTokenException() {
+
+        String token = validTokenBuilder()
+            .signWith(keyPair.getPrivate(), Jwts.SIG.RS512)
+            .compact();
+
+        assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
     }
 
     private JwtBuilder validTokenBuilder() {
