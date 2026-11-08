@@ -17,6 +17,7 @@ public class JwtValidator {
         this.jwtParser = Jwts.parser()
             .verifyWith(rsaKeyProperties.getPublicKey())
             .sig()
+                .clear()
                 .add(Jwts.SIG.RS256)
             .and()
             .build();
