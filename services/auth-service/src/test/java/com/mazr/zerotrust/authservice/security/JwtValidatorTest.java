@@ -90,6 +90,18 @@ class JwtValidatorTest {
         assertInstanceOf(SignatureException.class, ex.getCause());
     }
 
+    @Test
+    void validateToken_withExpiredToken_throwsInvalidTokenException() {
+
+        String token = validTokenBuilder()
+            .expiration(new Date(System.currentTimeMillis() - Duration.ofMinutes(16).toMillis()))
+            .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
+            .compact();
+
+        InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
+        assertInstanceOf(ExpiredJwtException.class, ex.getCause());
+    }
 
     private JwtBuilder validTokenBuilder() {
         return Jwts.builder()
