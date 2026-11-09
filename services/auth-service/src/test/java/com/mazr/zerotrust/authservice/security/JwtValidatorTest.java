@@ -3,8 +3,10 @@ package com.mazr.zerotrust.authservice.security;
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
 import com.mazr.zerotrust.authservice.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -69,7 +71,25 @@ class JwtValidatorTest {
             .compact();
 
         assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
     }
+
+    @Test
+    void validateToken_withWrongSigningKey_throwsInvalidTokenException() throws NoSuchAlgorithmException {
+
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        KeyPair keyPair2 = keyPairGenerator.generateKeyPair();
+
+        String token = validTokenBuilder()
+            .signWith(keyPair2.getPrivate(), Jwts.SIG.RS256)
+            .compact();
+
+        InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
+        assertInstanceOf(SignatureException.class, ex.getCause());
+    }
+
 
     private JwtBuilder validTokenBuilder() {
         return Jwts.builder()
