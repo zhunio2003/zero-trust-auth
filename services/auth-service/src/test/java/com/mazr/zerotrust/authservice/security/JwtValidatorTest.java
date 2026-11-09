@@ -78,8 +78,7 @@ class JwtValidatorTest {
             .claim("department", "IT")
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + Duration.ofMinutes(15).toMillis()))
-            .id(UUID.randomUUID().toString())
-            .signWith(keyPair.getPrivate(), Jwts.SIG.RS256);
+            .id(UUID.randomUUID().toString());
 
     }
 
