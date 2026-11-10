@@ -3,6 +3,7 @@ package com.mazr.zerotrust.authservice.security;
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
 import com.mazr.zerotrust.authservice.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -120,6 +122,20 @@ class JwtValidatorTest {
     void validateToken_withMalformedToken_throwsInvalidTokenException(String token) {
 
         assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
+    }
+
+    @Test
+    void validateToken_withForgedHs256Token_throwsInvalidTokenException() {
+
+        SecretKey secret = Keys.hmacShaKeyFor(keyPair.getPublic().getEncoded());
+
+        String token = validTokenBuilder()
+            .signWith(secret, Jwts.SIG.HS256)
+            .compact();
+
+        InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+        assertInstanceOf(SignatureException.class, ex.getCause());
 
     }
 
