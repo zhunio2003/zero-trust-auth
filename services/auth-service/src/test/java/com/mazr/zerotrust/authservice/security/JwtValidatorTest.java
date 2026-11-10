@@ -7,6 +7,9 @@ import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -109,6 +112,15 @@ class JwtValidatorTest {
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
 
         assertInstanceOf(UnsupportedJwtException.class, ex.getCause());
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"trash", "a.b.c"})
+    void validateToken_withMalformedToken_throwsInvalidTokenException(String token) {
+
+        assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
     }
 
     private JwtBuilder validTokenBuilder() {
