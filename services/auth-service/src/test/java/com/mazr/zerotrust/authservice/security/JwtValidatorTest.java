@@ -2,10 +2,7 @@ package com.mazr.zerotrust.authservice.security;
 
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
 import com.mazr.zerotrust.authservice.exception.InvalidTokenException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,6 +98,17 @@ class JwtValidatorTest {
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
 
         assertInstanceOf(ExpiredJwtException.class, ex.getCause());
+    }
+
+    @Test
+    void validateToken_withUnsignedToken_throwsInvalidTokenException() {
+
+        String token = validTokenBuilder()
+            .compact();
+
+        InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
+        assertInstanceOf(UnsupportedJwtException.class, ex.getCause());
     }
 
     private JwtBuilder validTokenBuilder() {
