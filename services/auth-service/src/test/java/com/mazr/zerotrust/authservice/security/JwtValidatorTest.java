@@ -20,6 +20,8 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -136,6 +138,32 @@ class JwtValidatorTest {
 
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
         assertInstanceOf(SignatureException.class, ex.getCause());
+
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"sub", "iat", "exp", "role", "department", "jti"})
+    void validateToken_withMissingClaim_throwsInvalidTokenException(String missingClaim) {
+
+        Map<String, Object> claims = new HashMap<>();
+
+        claims.put("sub", "1L");
+        claims.put("iat", new Date());
+        claims.put("exp", new Date(System.currentTimeMillis() + Duration.ofMinutes(15).toMillis()));
+        claims.put("role", "ADMIN");
+        claims.put("department", "IT");
+        claims.put("jti", "a7f2e8d4-3c9b-4f1a-b2e7-8d4c9f1a2b3e");
+
+        claims.remove(missingClaim);
+
+        String token = Jwts.builder()
+            .claims(claims)
+            .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
+            .compact();
+
+        InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
+
+        assertNull(ex.getCause());
 
     }
 
