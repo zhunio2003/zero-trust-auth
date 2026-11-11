@@ -1,20 +1,21 @@
 package com.mazr.zerotrust.authservice.security;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
+
 import com.mazr.zerotrust.authservice.config.RsaKeyProperties;
 import com.mazr.zerotrust.authservice.exception.InvalidTokenException;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import javax.crypto.SecretKey;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -23,10 +24,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
+import javax.crypto.SecretKey;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class JwtValidatorTest {
@@ -40,7 +47,6 @@ class JwtValidatorTest {
 
     @BeforeEach
     void setup() throws NoSuchAlgorithmException {
-
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
         keyPair = keyPairGenerator.generateKeyPair();
@@ -48,12 +54,11 @@ class JwtValidatorTest {
         when(rsaKeyProperties.getPublicKey()).thenReturn(keyPair.getPublic());
 
         jwtValidator = new JwtValidator(rsaKeyProperties);
-
     }
 
     @Test
-    void validateToken_withValidToken_returnsClaims() {
-
+    @DisplayName("token válido: devuelve los claims")
+    void validateTokenWithValidTokenReturnsClaims() {
         String token = validTokenBuilder()
             .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
             .compact();
@@ -64,29 +69,27 @@ class JwtValidatorTest {
         assertEquals("IT", claims.get("department", String.class));
         assertNotNull(claims.getSubject());
         assertNotNull(claims.getId());
-
     }
 
     @Test
-    void validateToken_withRs512Algorithm_throwsInvalidTokenException() {
-
+    @DisplayName("allowlist: rechaza RS512 aunque la firma sea válida")
+    void validateTokenWithRs512AlgorithmThrowsInvalidTokenException() {
         String token = validTokenBuilder()
             .signWith(keyPair.getPrivate(), Jwts.SIG.RS512)
             .compact();
 
         assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
-
     }
 
     @Test
-    void validateToken_withWrongSigningKey_throwsInvalidTokenException() throws NoSuchAlgorithmException {
-
+    @DisplayName("firma hecha con otra clave: rechaza por SignatureException")
+    void validateTokenWithWrongSigningKeyThrowsInvalidTokenException() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         keyPairGenerator.initialize(2048);
-        KeyPair keyPair2 = keyPairGenerator.generateKeyPair();
+        KeyPair otherKeyPair = keyPairGenerator.generateKeyPair();
 
         String token = validTokenBuilder()
-            .signWith(keyPair2.getPrivate(), Jwts.SIG.RS256)
+            .signWith(otherKeyPair.getPrivate(), Jwts.SIG.RS256)
             .compact();
 
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
@@ -95,9 +98,10 @@ class JwtValidatorTest {
     }
 
     @Test
-    void validateToken_withExpiredToken_throwsInvalidTokenException() {
-
+    @DisplayName("token expirado: rechaza por ExpiredJwtException")
+    void validateTokenWithExpiredTokenThrowsInvalidTokenException() {
         String token = validTokenBuilder()
+            .issuedAt(new Date(System.currentTimeMillis() - Duration.ofMinutes(30).toMillis()))
             .expiration(new Date(System.currentTimeMillis() - Duration.ofMinutes(16).toMillis()))
             .signWith(keyPair.getPrivate(), Jwts.SIG.RS256)
             .compact();
@@ -108,8 +112,8 @@ class JwtValidatorTest {
     }
 
     @Test
-    void validateToken_withUnsignedToken_throwsInvalidTokenException() {
-
+    @DisplayName("token sin firma (alg none): rechaza por UnsupportedJwtException")
+    void validateTokenWithUnsignedTokenThrowsInvalidTokenException() {
         String token = validTokenBuilder()
             .compact();
 
@@ -118,18 +122,17 @@ class JwtValidatorTest {
         assertInstanceOf(UnsupportedJwtException.class, ex.getCause());
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "token malformado: {0}")
     @NullAndEmptySource
     @ValueSource(strings = {"trash", "a.b.c"})
-    void validateToken_withMalformedToken_throwsInvalidTokenException(String token) {
-
+    @DisplayName("token nulo, vacío o malformado: rechaza")
+    void validateTokenWithMalformedTokenThrowsInvalidTokenException(String token) {
         assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
-
     }
 
     @Test
-    void validateToken_withForgedHs256Token_throwsInvalidTokenException() {
-
+    @DisplayName("HS256 forjado con la clave pública como secreto: rechaza")
+    void validateTokenWithForgedHs256TokenThrowsInvalidTokenException() {
         SecretKey secret = Keys.hmacShaKeyFor(keyPair.getPublic().getEncoded());
 
         String token = validTokenBuilder()
@@ -137,22 +140,22 @@ class JwtValidatorTest {
             .compact();
 
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
-        assertInstanceOf(SignatureException.class, ex.getCause());
 
+        assertInstanceOf(SignatureException.class, ex.getCause());
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "falta el claim {0}")
     @ValueSource(strings = {"sub", "iat", "exp", "role", "department", "jti"})
-    void validateToken_withMissingClaim_throwsInvalidTokenException(String missingClaim) {
-
+    @DisplayName("claim obligatorio ausente: rechaza sin causa externa")
+    void validateTokenWithMissingClaimThrowsInvalidTokenException(String missingClaim) {
         Map<String, Object> claims = new HashMap<>();
 
-        claims.put("sub", "1L");
+        claims.put("sub", UUID.randomUUID().toString());
         claims.put("iat", new Date());
         claims.put("exp", new Date(System.currentTimeMillis() + Duration.ofMinutes(15).toMillis()));
         claims.put("role", "ADMIN");
         claims.put("department", "IT");
-        claims.put("jti", "a7f2e8d4-3c9b-4f1a-b2e7-8d4c9f1a2b3e");
+        claims.put("jti", UUID.randomUUID().toString());
 
         claims.remove(missingClaim);
 
@@ -164,7 +167,6 @@ class JwtValidatorTest {
         InvalidTokenException ex = assertThrows(InvalidTokenException.class, () -> jwtValidator.validateToken(token));
 
         assertNull(ex.getCause());
-
     }
 
     private JwtBuilder validTokenBuilder() {
@@ -175,7 +177,5 @@ class JwtValidatorTest {
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + Duration.ofMinutes(15).toMillis()))
             .id(UUID.randomUUID().toString());
-
     }
-
 }
