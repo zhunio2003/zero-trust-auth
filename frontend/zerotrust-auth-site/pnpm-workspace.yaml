@@ -1,0 +1,13 @@
+# Configuración de seguridad de pnpm (misma política que el ADR-006 de MultIAZ).
+
+# No instalar versiones publicadas hace menos de 7 días (10080 minutos).
+# La mayoría de paquetes maliciosos se detectan y se retiran en ese tiempo.
+minimumReleaseAge: 10080
+
+# Prohibir que dependencias transitivas vengan de fuentes "exóticas"
+# (repos git, tarballs sueltos). Todo debe venir del registro npm.
+blockExoticSubdeps: true
+
+# Si un paquete intenta ejecutar scripts de instalación (postinstall...)
+# y no está aprobado, la instalación FALLA en vez de ignorarlo en silencio.
+strictDepBuilds: true
