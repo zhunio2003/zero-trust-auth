@@ -45,9 +45,9 @@ class RefreshTokenServiceTest {
         assertNotNull(refreshToken);
 
         verify(redisTemplate.opsForValue()).set(
-            contains("refresh"),
-            eq(userId.toString()),
-            any(Duration.class)
+            startsWith("refresh:"),
+            startsWith(userId + ":"),
+            eq(Duration.ofDays(7))
         );
     }
 
