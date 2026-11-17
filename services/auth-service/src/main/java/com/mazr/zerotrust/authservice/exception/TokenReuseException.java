@@ -1,12 +1,8 @@
 package com.mazr.zerotrust.authservice.exception;
 
-public class ReuseTokenException extends RuntimeException {
+public class TokenReuseException extends InvalidTokenException {
 
-    public ReuseTokenException() {
-        super("Invalid token");
-    }
-    public ReuseTokenException(Throwable cause) {
-        super("Invalid token", cause);
-    }
+    //  Refresh token already consumed: possible theft. Treats the client the same as an invalid token.
+    public TokenReuseException() {}
+
 }
-
