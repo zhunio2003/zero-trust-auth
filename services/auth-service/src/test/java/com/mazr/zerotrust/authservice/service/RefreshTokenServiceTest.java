@@ -38,7 +38,7 @@ class RefreshTokenServiceTest {
     }
 
     @Test
-    void existsToken() {
+    void generateRefreshTokenStoresUserIdAndFamilyIdWithSevenDaysTtl() {
 
         String refreshToken = refreshTokenService.generateRefreshToken(userId);
 
