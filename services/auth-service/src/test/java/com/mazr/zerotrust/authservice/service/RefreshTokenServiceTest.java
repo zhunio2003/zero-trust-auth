@@ -49,6 +49,24 @@ class RefreshTokenServiceTest {
             startsWith(userId + ":"),
             eq(Duration.ofDays(7))
         );
+
+    }
+
+    @Test
+    void generateRefreshTokenStoresUserIdAndFamilyId() {
+
+        UUID familyId = UUID.randomUUID();
+
+        String refreshToken = refreshTokenService.generateRefreshToken(userId,  familyId);
+
+        assertNotNull(refreshToken);
+
+        verify(valueOps).set(
+            startsWith("refresh:"),
+            eq(userId + ":" + familyId),
+            eq(Duration.ofDays(7))
+        );
+
     }
 
 
