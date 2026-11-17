@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -16,10 +17,18 @@ public class RefreshTokenService {
 
     public String generateRefreshToken(UUID userId) {
 
+        return generateRefreshToken(userId, UUID.randomUUID());
+
+    }
+
+    public String generateRefreshToken(UUID userId, UUID familyId) {
+
         String token = UUID.randomUUID().toString();
-        redisTemplate.opsForValue().set("refresh:" + token, userId.toString(), Duration.ofDays(7));
+
+        redisTemplate.opsForValue().set("refresh:" + token, userId + ":" + familyId, Duration.ofDays(7));
 
         return token;
+
     }
 
     public UUID getUserIdFromRefreshToken(String token) {
