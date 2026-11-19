@@ -5,4 +5,6 @@ import java.util.UUID;
 public record RefreshSession(
     UUID userId,
     UUID familyId
-) {}
+) {
+
+}
