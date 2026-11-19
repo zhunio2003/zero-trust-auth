@@ -1,6 +1,5 @@
 package com.mazr.zerotrust.authservice.service;
 
-import com.mazr.zerotrust.authservice.exception.InvalidCredentialsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -31,12 +30,4 @@ public class RefreshTokenService {
 
     }
 
-    public UUID getUserIdFromRefreshToken(String token) {
-
-        String userId = redisTemplate.opsForValue().get("refresh:" + token);
-        if (userId == null) {
-            throw new InvalidCredentialsException();
-        }
-        return UUID.fromString(userId);
-    }
 }
