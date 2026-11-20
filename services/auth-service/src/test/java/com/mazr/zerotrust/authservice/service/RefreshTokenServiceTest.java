@@ -12,10 +12,10 @@ import org.springframework.data.redis.core.ValueOperations;
 import java.time.Duration;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenServiceTest {
@@ -69,5 +69,21 @@ class RefreshTokenServiceTest {
 
     }
 
+    @Test
+    void consumeWithValidTokenReturnsSession() {
 
+        String token = UUID.randomUUID().toString();
+        UUID familyId = UUID.randomUUID();
+
+        RefreshSession expected = new RefreshSession(userId, familyId);
+
+        when(valueOps.get("refresh:" + token)).thenReturn(userId + ":" + familyId);
+        when(redisTemplate.hasKey("family:revoked:" + familyId)).thenReturn(false);
+        when(valueOps.setIfAbsent("refresh:used:" + token, "1", Duration.ofDays(7))).thenReturn(true);
+
+        assertEquals(expected, refreshTokenService.consume(token));
+
+        verify(valueOps, never()).set(any(), any(), any(Duration.class));
+
+    }
 }
