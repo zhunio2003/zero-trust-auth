@@ -1,0 +1,66 @@
+/*
+ * ============================================================
+ *  TOKENS DE DISEÑO — ZeroTrust Auth
+ * ============================================================
+ *  Colores sacados del logo (docs/brand/logo-zero.jpeg):
+ *  fondo azul marino casi negro + líneas neón cyan → azul → verde.
+ *
+ *  Igual que en MultIAZ: ningún componente escribe colores a mano,
+ *  todos usan estas variables.
+ *
+ *  Todo el sitio es OSCURO: no hay versión clara.
+ * ============================================================
+ */
+
+:root {
+    /* ---------- Fondos (de más oscuro a más claro = capas) ---------- */
+    --zt-bg: #05080f; /* fondo general: azul marino casi negro */
+    --zt-bg-elevated: #0a1120; /* tarjetas, menús */
+    --zt-bg-raised: #101a2e; /* elementos encima de tarjetas */
+
+    /* ---------- Marca (del logo) ---------- */
+    --zt-cyan: #2dd4e8;
+    --zt-blue: #1ea7e8;
+    --zt-green: #4ade80;
+    --zt-violet: #7c6cf0; /* los puntitos morados del logo: solo detalles */
+
+    /* Degradado de marca: el mismo recorrido de color que el infinito del logo */
+    --zt-gradient: linear-gradient(90deg, var(--zt-cyan), var(--zt-blue) 50%, var(--zt-green));
+
+    /* ---------- Semánticos ---------- */
+    --zt-allow: var(--zt-green); /* acceso permitido */
+    --zt-deny: #f87171; /* acceso denegado (rojo suave, no agresivo) */
+
+    /* ---------- Texto ---------- */
+    --zt-text: #e8eef9; /* principal (no blanco puro: cansa menos la vista en fondo oscuro) */
+    --zt-text-muted: #8a97ad; /* secundario — 6.6:1 sobre --zt-bg ✅ */
+    --zt-text-dim: #5d6a80; /* terciario: etiquetas pequeñas */
+
+    /* ---------- Bordes ---------- */
+    --zt-border: color-mix(in srgb, white 8%, transparent);
+    --zt-border-strong: color-mix(in srgb, white 16%, transparent);
+
+    /* ---------- Tipografía ---------- */
+    --zt-font: 'Inter', system-ui, sans-serif;
+    --zt-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+    /* ---------- Espaciado (base 4px, como en MultIAZ) ---------- */
+    --zt-space-1: 4px;
+    --zt-space-2: 8px;
+    --zt-space-3: 12px;
+    --zt-space-4: 16px;
+    --zt-space-6: 24px;
+    --zt-space-8: 32px;
+    --zt-space-12: 48px;
+    --zt-space-16: 64px;
+
+    /* ---------- Formas y movimiento ---------- */
+    --zt-radius-sm: 8px;
+    --zt-radius-md: 12px;
+    --zt-radius-pill: 999px;
+    /*
+     * Curva "suave al final": las animaciones de Clerk se sienten así,
+     * arrancan con decisión y frenan muy despacio.
+     */
+    --zt-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
