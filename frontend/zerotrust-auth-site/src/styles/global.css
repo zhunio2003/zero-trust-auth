@@ -1,0 +1,63 @@
+/*
+ * ============================================================
+ *  ESTILOS GLOBALES DE LA PORTADA
+ * ============================================================
+ *  (Los docs usan los estilos de Starlight + starlight.css)
+ * ============================================================
+ */
+
+@import './tokens.css';
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    /* Le dice al navegador que el sitio es oscuro: scrollbars y controles nativos oscuros */
+    color-scheme: dark;
+    /* Los links a #secciones se desplazan suave en vez de saltar */
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: var(--zt-bg);
+    color: var(--zt-text);
+    font-family: var(--zt-font);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+p {
+    margin: 0;
+}
+
+a {
+    color: inherit;
+}
+
+/* Al seleccionar texto, el resaltado usa el color de marca */
+::selection {
+    background: color-mix(in srgb, var(--zt-cyan) 35%, transparent);
+}
+
+/* Accesibilidad: si el usuario pidió menos movimiento, apagamos animaciones */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
