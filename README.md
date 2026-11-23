@@ -1,5 +1,5 @@
 <div align="center">
-    <h1>ZEROTRUST — Enterprise Authentication & Authorization Platform</h1>
+    <h1>ZERO  TRUST — Enterprise Authentication & Authorization Platform</h1>
 <img src="docs/brand/logo-zero.jpeg" alt="logo zerotrust" width="900">
 <br/><br/>
 
