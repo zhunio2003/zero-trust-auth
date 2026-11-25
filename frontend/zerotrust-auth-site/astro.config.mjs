@@ -18,6 +18,7 @@ export default defineConfig({
     integrations: [
         starlight({
             title: 'ZeroTrust Auth',
+            // El mismo logo de la portada, ahora también arriba a la izquierda en los docs
             logo: { src: './src/assets/logo.svg' },
             favicon: '/favicon.svg',
 
