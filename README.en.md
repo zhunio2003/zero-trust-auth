@@ -1,4 +1,4 @@
-<p align="center"><a href="README.md">English</a> · <strong>Español</strong></p>
+<p align="center"><a href="README.md">Español</a> · <strong>English</strong></p>
 
 <div align="center">
     <h1>ZERO  TRUST — Enterprise Authentication & Authorization Platform</h1>
@@ -52,50 +52,49 @@
 <img src="https://img.shields.io/badge/Nginx-planned-009639?logo=nginx&logoColor=white" alt="Nginx"/>
 <br/><br/>
 </div>
-
 > Enterprise-grade authentication & authorization platform built from scratch with microservices architecture. Implements real Zero Trust: every request is verified continuously based on identity, context, and behavior.
 
 ---
 
 ## What is this?
 
-La plataforma ZeroTrust Auth es una API de autenticación y autorización de nivel empresarial, desarrollada desde cero con una arquitectura de microservicios. Implementa el modelo Zero Trust real: ninguna solicitud se considera confiable por defecto. Cada sesión se verifica continuamente en función de la identidad, el contexto y el comportamiento.
+ZeroTrust Auth is an enterprise-grade authentication and authorization API, built from scratch on a microservices architecture. It implements the real Zero Trust model: no request is trusted by default. Every session is verified continuously based on identity, context and behavior.
 
-La plataforma ofrece mecanismos de seguridad multicapa, incluyendo MFA, gestión del ciclo de vida de los tokens JWT y limitación de velocidad distribuida. Un motor de detección de anomalías basado en aprendizaje automático monitoriza todos los eventos de autenticación y autorización en tiempo real, calculando una puntuación de confianza por solicitud y alertando a los administradores cuando surgen patrones sospechosos. La observabilidad completa está integrada desde el principio: métricas, datos históricos y un panel de administración en tiempo real proporcionan visibilidad total del sistema en todo momento.
+The platform provides multi-layered security mechanisms, including MFA, JWT lifecycle management and distributed rate limiting. A machine-learning anomaly detection engine monitors every authentication and authorization event in real time, computing a per-request trust score and alerting administrators when suspicious patterns emerge. Full observability is built in from day one: metrics, historical data and a real-time admin dashboard give complete visibility into the system at all times.
 
 ---
  
 ## Architecture Overview
 
-> **Deep dive:** [Arquitectura Detallada](docs/architecture/DETAILED_ARCHITECTURE.md) · [Diagrama de Componentes](docs/diagrams/COMPONENT_DIAGRAM.mermaid)
+> **Deep dive:** [Detailed Architecture](docs/architecture/DETAILED_ARCHITECTURE.md) · [Component Diagram](docs/diagrams/COMPONENT_DIAGRAM.mermaid)
 
 ---
  
 ## Key Features
 
-- **Multi-Factor Authentication (MFA)** — soporta TOTP (códigos temporales) y WebAuthn/Passkeys vinculados al dominio legítimo
-- **JWT Lifecycle Management** — tokens firmados con RS256, rotación de refresh tokens y revocación inmediata con blacklist en Redis
-- **Distributed Rate Limiting** — algoritmo Token Bucket implementado desde cero con contadores distribuidos entre instancias
-- **ABAC Authorization** — autorización basada en atributos evaluando rol, departamento, hora, sensibilidad del recurso y score de confianza del ML
-- **ML Anomaly Detection** — cálculo de score de confianza en tiempo real basado en IP, patrones de comportamiento, velocidad de requests e historial del usuario
-- **Immutable Audit Logs** — hash chaining garantiza que cada evento es detectable ante cualquier modificación y tiene valor forense
-- **Real-time Observability** — métricas con Prometheus, dashboards en Grafana y alertas automáticas ante patrones anómalos detectados
-- **Admin Dashboard** — visibilidad completa de sesiones activas, audit logs, políticas ABAC y monitoreo de amenazas en tiempo real
+- **Multi-Factor Authentication (MFA)** — supports TOTP (time-based one-time codes) and WebAuthn/Passkeys bound to the legitimate domain
+- **JWT Lifecycle Management** — RS256-signed tokens, refresh token rotation and immediate revocation through a Redis blacklist
+- **Distributed Rate Limiting** — Token Bucket algorithm implemented from scratch, with counters shared across instances
+- **ABAC Authorization** — attribute-based authorization that evaluates role, department, time of day, resource sensitivity and the ML trust score
+- **ML Anomaly Detection** — real-time trust score based on IP, behavior patterns, request velocity and user history
+- **Immutable Audit Logs** — hash chaining makes any tampering with an event detectable and gives every record forensic value
+- **Real-time Observability** — Prometheus metrics, Grafana dashboards and automatic alerts when anomalous patterns are detected
+- **Admin Dashboard** — full visibility into active sessions, audit logs, ABAC policies and real-time threat monitoring
 
 ---
 
 ## Security Model
 
-Esta plataforma implementa un modelo de confianza cero real, creado desde cero: ninguna solicitud se considera de confianza por defecto, y cada acceso se verifica continuamente.
-La seguridad se aplica en múltiples niveles:
+This platform implements a real Zero Trust model, built from scratch: no request is trusted by default, and every access is verified continuously.
+Security is enforced at multiple levels:
 
-- **Identity verification** — MFA obligatorio con TOTP y WebAuthn. Sin segundo factor no hay acceso.
-- **Token security** — JWTs firmados con RS256. Tokens con algoritmo none o firmas inválidas son rechazados explícitamente. Revocación inmediata en Redis ante cierre de sesión o detección de token reuse attack.
-- **Authorization** — políticas ABAC evaluadas en cada request combinando atributos del usuario, contexto y score de confianza del ML. Denegación por defecto ante cualquier caso no cubierto.
-- **Rate limiting** — algoritmo Token Bucket distribuido limita requests por IP. Primer filtro antes de cualquier verificación de credenciales.
-- **Audit integrity** — hash chaining en cada evento de auditoría. Cualquier modificación rompe la cadena y es detectable.
-- **Error handling** — mensajes de error genéricos al cliente. Ninguna respuesta expone estructura interna, nombres de tablas ni stack traces.
-- **Transport** — CORS estricto configurado en el API Gateway. WebAuthn vincula la autenticación al dominio legítimo.
+- **Identity verification** — mandatory MFA with TOTP and WebAuthn. No second factor, no access.
+- **Token security** — RS256-signed JWTs. Tokens using the `none` algorithm or carrying invalid signatures are explicitly rejected. Immediate revocation in Redis on logout or when a token reuse attack is detected.
+- **Authorization** — ABAC policies evaluated on every request, combining user attributes, context and the ML trust score. Deny by default for any case not covered.
+- **Rate limiting** — a distributed Token Bucket algorithm limits requests per IP. It is the first filter, before any credential check.
+- **Audit integrity** — hash chaining on every audit event. Any modification breaks the chain and is detectable.
+- **Error handling** — generic error messages to the client. No response exposes internal structure, table names or stack traces.
+- **Transport** — strict CORS configured at the API Gateway. WebAuthn binds authentication to the legitimate domain.
 
 > **Deep dive:** [Threat Model — STRIDE](docs/security/THREAT-MODEL_STRIDE_ZEROTRUST.md)
  
@@ -254,7 +253,7 @@ The CI pipeline runs all tests automatically on every push.
  
 ## Deployment
 
-El sistema se ejecuta completamente en contenedores con Docker Compose a través de 4 redes segmentadas:
+The whole system runs in containers with Docker Compose across 4 segmented networks:
 
 | Network | Purpose | Containers |
 |---------|---------|-----------|
@@ -263,13 +262,12 @@ El sistema se ejecuta completamente en contenedores con Docker Compose a través
 | `data` | Database access (internal) | microservices, databases |
 | `monitoring` | Metrics collection (internal) | microservices, prometheus, grafana |
 
-Solo `api-gateway` (:8080) y `frontend` (:80) están expuestos al host. Todos los demás contenedores operan exclusivamente en redes internas.
+Only `api-gateway` (:8080) and `frontend` (:80) are exposed to the host. Every other container runs exclusively on internal networks.
 
-> **Deep dive:** [Diagrama de Despliegue](docs/diagrams/DEPLOYMENT_DIAGRAM.mermaid)
+> **Deep dive:** [Deployment Diagram](docs/diagrams/DEPLOYMENT_DIAGRAM.mermaid)
  
 ---
  
-## Documentation
 ## Documentation
 
 | Document | Description |
