@@ -1,4 +1,4 @@
-<p align="center"><strong>English</strong> · <a href="README.es.md">Español</a></p>
+<p align="center"><strong>Español</strong> · <a href="README.en.md">English</a></p>
 
 <div align="center">
     <h1>ZERO  TRUST — Enterprise Authentication & Authorization Platform</h1>
